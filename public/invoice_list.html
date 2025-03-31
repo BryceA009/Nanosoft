@@ -13,17 +13,17 @@
     <link rel="stylesheet" href="./css/invoice_list.css" type="text/css" />
     <link
       rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"
-      integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg=="
+      href="css/icons.min.css"
       crossorigin="anonymous"
       referrerpolicy="no-referrer"
     />
 
     <script
       defer
-      src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"
+      src="js/alpine.min.js"
     ></script>
-    <script src="https://unpkg.com/htmx.org@2.0.4"></script>
+
+    <script src="js/htmx.min.js"></script>
   </head>
 
   <body>
@@ -97,12 +97,97 @@
               <div class="table_container">
                 <table id="invoice_table">
                   <thead>
-                    <th><button type="button" @click="sortInvoice('id')">Invoice ID</button></th>
-                    <th><button type="button" @click="sortInvoice('first_name')">First name</button></th>
-                    <th><button type="button" @click="sortInvoice('last_name')">Last name</button></th>
-                    <th><button type="button" @click="sortInvoice('invoice_date')">Create Date</button></th>
-                    <th><button type="button" @click="sortInvoice('due_date')">Due Date</button></th>
-                    <th><button type="button" @click="sortInvoice('status_id')">Status</button></th>
+                    <th>
+                      
+                      <button type="button" @click="sortInvoice('id')">
+                        <div class = "left_side">
+                          <p>Invoice ID</p>
+                        </div>
+        
+                        <div class = "right_side" x-show = "sort_category === 'id'">
+                          <i class="fa fa-caret-up" aria-hidden="true" x-show = "sort_direction === 'asc'"></i>
+                          <i class="fa fa-caret-down" aria-hidden="true" x-show = "sort_direction === 'desc'"></i>     
+                        </div>
+
+                      </button>
+                    </th>
+
+                    <th>
+                    <button type="button" @click="sortInvoice('first_name')">
+
+                        <div class = "left_side">
+                          <p>First name</p>
+                        </div>
+        
+                        <div class = "right_side" x-show = "sort_category === 'first_name'">
+                          <i class="fa fa-caret-up" aria-hidden="true" x-show = "sort_direction === 'asc'"></i>
+                          <i class="fa fa-caret-down" aria-hidden="true" x-show = "sort_direction === 'desc'"></i>     
+                        </div>
+                    
+                    </button>
+                    </th>
+
+                    <th>
+                      <button type="button" @click="sortInvoice('last_name')">
+
+                        <div class = "left_side">
+                          <p>Last name</p>
+                        </div>
+        
+                        <div class = "right_side" x-show = "sort_category === 'last_name'">
+                          <i class="fa fa-caret-up" aria-hidden="true" x-show = "sort_direction === 'asc'"></i>
+                          <i class="fa fa-caret-down" aria-hidden="true" x-show = "sort_direction === 'desc'"></i>     
+                        </div>
+
+                      </button>
+
+                    </th>
+
+                    <th>
+                      <button type="button" @click="sortInvoice('invoice_date')">
+                        
+                        <div class = "left_side">
+                          <p>Create date</p>
+                        </div>
+        
+                        <div class = "right_side" x-show = "sort_category === 'invoice_date'">
+                          <i class="fa fa-caret-up" aria-hidden="true" x-show = "sort_direction === 'asc'"></i>
+                          <i class="fa fa-caret-down" aria-hidden="true" x-show = "sort_direction === 'desc'"></i>     
+                        </div>
+
+                      </button>
+                    </th>
+
+                    <th>
+                      <button type="button" @click="sortInvoice('due_date')">
+
+                        <div class = "left_side">
+                          <p>Due date</p>
+                        </div>
+        
+                        <div class = "right_side" x-show = "sort_category === 'due_date'">
+                          <i class="fa fa-caret-up" aria-hidden="true" x-show = "sort_direction === 'asc'"></i>
+                          <i class="fa fa-caret-down" aria-hidden="true" x-show = "sort_direction === 'desc'"></i>     
+                        </div>
+                        
+                      </button>
+                    </th>
+
+                    <th>
+                      <button type="button" @click="sortInvoice('status_id')">
+
+                        <div class = "left_side">
+                          <p>Status</p>
+                        </div>
+        
+                        <div class = "right_side" x-show = "sort_category === 'status_id'">
+                          <i class="fa fa-caret-up" aria-hidden="true" x-show = "sort_direction === 'asc'"></i>
+                          <i class="fa fa-caret-down" aria-hidden="true" x-show = "sort_direction === 'desc'"></i>     
+                        </div>
+
+                      </button>
+                    </th>
+
                     <th>Action</th>
                   </thead>
 
