@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="author" content="Bryce Allies" />
+    <meta
+      name="description"
+      content="This page contains the Taco shop contact details"
+    />
+    <title>Tutorial Page</title>
+    <link rel="icon" href="favicon.ico" type="image/x-icon" />
+    <link rel="stylesheet" href="./css/style.css" type="text/css" />
+    <link rel="stylesheet" href="./css/customer_list.css" type="text/css" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"
+      integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    />
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <script src="https://unpkg.com/htmx.org@2.0.4"></script>
+  </head>
+
+  <body>
+   <div hx-trigger="load" hx-get="./components/side_nav.html" ></div>
+
+    <main>
+      <header>
+        <div class="left_side_header">
+        </div>
+
+        <div class="right_side_header">
+        </div>
+      </header>
+      <form action="https://eu.httpbin.org/post" x-data = "customerList" method = "POST">
+      <section>
+        <article id="header">
+          <div class="left_side_header">
+            
+          </div>
+          <div class="right_side_header">
+            
+          </div>
+        </article>
+
+        <article>
+        <p class="header">Customer list</p>
+        <div class = "block">
+          <header>
+            <a href="customer_create.html">+ Add Customer</a>
+          </header>
+
+        <div class="table_container">
+          <table id = "customer_table">
+            <thead>
+              <th>Name</th>
+              <th>Email</th>
+              <th>Phone</th>
+              <th>Action</th>
+            </thead>
+
+            <template x-for="customer in customerList">
+              <tr>
+                <td class = "name">
+                  <span x-text="customer.first_name" class = "firstName"></span>
+                  <span x-text="customer.last_name" class = "lastName"></span>
+                </td>
+
+                <td>
+                  <span x-text="customer.email" ></span>
+                </td>
+
+                <td>
+                  <span x-text="customer.phone" ></span>
+                </td>
+
+                <td class="actions">
+
+                  <button type="button" @click= "deleteCustomer(customer.id)"  class="delete-btn icon-btn" 
+                  x-data="{ showTooltip: false }"
+                  @mouseenter="showTooltip = true"
+                  @mouseleave="showTooltip = false"> 
+                  <i class="fa fa-trash" aria-hidden="true"></i>
+                  <span x-show="showTooltip" class="tooltip">
+                    Delete 
+                  </span>
+                  </button>
+
+                  <a x-bind:href="'customer_edit.html?customer_id=' + customer.id" class="edit-btn icon-btn"      
+                  x-data="{ showTooltip: false }"
+                  @mouseenter="showTooltip = true" 
+                  @mouseleave="showTooltip = false">
+                  <i class="fa fa-pencil" aria-hidden="true"></i>
+                  <span x-show="showTooltip" class="tooltip">Edit</span>
+                  </a>
+
+                  <a x-bind:href="'invoice_list.html?customer_id=' + customer.id" class="invoice-btn icon-btn"      
+                  x-data="{ showTooltip: false }"
+                  @mouseenter="showTooltip = true" 
+                  @mouseleave="showTooltip = false">
+                  <i class="fa fa-file-text" aria-hidden="true"></i>
+                  <span x-show="showTooltip" class="tooltip">Invoices</span>
+                  </a>
+                </td>
+
+              </tr>
+            </template>
+          </table>
+        </div>
+      </div>
+      </article>
+      </section>
+    </form>
+    </main>
+    <script src="./js/customer_list.js"></script>
+    <script src="./js/side_bar.js"></script>
+  </body>
+</html>

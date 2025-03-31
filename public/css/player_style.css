@@ -1,0 +1,233 @@
+
+main{
+
+  header{
+
+    display: flex;
+    padding: 0 20px;
+    height: 80px;
+    justify-content: space-between;
+    background-color: #1a2020;
+  
+
+
+    .page_label{
+
+      display: flex;
+      align-items: center;
+      gap: 15px;
+
+      h1,
+      i {
+        font-size: 1.5rem;
+        color: white;
+      }
+  
+      i {
+        font-size: 1.5rem;
+        color: white;
+      }
+
+    }
+
+    .page_buttons{
+      display: flex;
+      align-items: center;
+      gap: 15px;
+
+      a {
+        background-color: #30aea9;
+        padding: 12px;
+        border-radius: 8px;
+        color: white;
+      }
+
+    }
+
+  }
+
+  section {
+    overflow-y: auto;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    padding: 20px;
+
+
+
+    #player_stats {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      padding: 20px;
+
+
+      .box {
+
+        flex: 1;
+        height: 80%;
+        padding: 20px;
+        background-color: #1a2020;
+        border-radius: 15px;
+        flex-direction: column;
+      }
+
+      h2 {
+        color: white;
+        padding-bottom: 40px;
+      }
+
+      table{
+
+        width: 100%;
+       
+        border-top: solid white;
+        border-bottom: solid rgba(255, 255, 255, 0.732);
+        color: white;
+
+        tr {
+          td {
+            padding: 10px 0px;
+          }
+        }
+      }
+
+    .filter{
+
+        padding-bottom: 15px;
+        select {
+
+          padding: 5px;
+          font-size: 16px;
+          background-color: #1a2020;
+          color: white;
+          
+        }
+  
+          label{
+
+          padding-bottom: 5px;
+          display: block;
+          color:#bcc3c5;
+        }
+
+      }
+
+
+    }
+
+    #player_table {
+      
+
+      display: flex;
+      padding: 20px;
+      align-items: center;
+
+
+      .box {
+        overflow-x: auto;
+        padding: 20px;
+        width: 100%;
+        background-color: #1a2020;
+        flex: 1;
+        border-radius: 15px;
+        display: flex;
+        flex-direction: column;
+        
+
+        header{
+
+          display:flex;
+          align-items: center;
+          justify-content: start;
+          padding: 0 0px;
+          gap: 10px;
+          
+
+          .filter{
+            
+
+            display:flex;
+            flex-direction: column;
+
+            label{
+              display: block;
+              color:#bcc3c5;
+              padding: 5px;
+            }
+
+            select{
+              padding: 5px;
+              font-size: 16px;
+              background-color: #1a2020;
+              color: white;
+            }
+
+            
+          }
+
+          button{
+            padding: 15px;
+            font-size: 18px;
+            border-radius: 10px;
+            background-color: #30aea9;
+            color: white;
+          }
+          
+        }
+        
+
+        table{
+
+          color:#bdc4c7;
+          border-bottom: solid #848a8c;
+          ;
+
+          thead{
+           
+
+            th{
+
+              text-align: left;
+              padding: 5px 0;
+            }
+          }
+
+          tbody{
+            tr{
+              td{
+                padding: 10px 0;
+              }
+              a{
+                background-color: #3a4d4c;
+                color: white;
+                border-radius: 10px;
+                padding: 5px;
+              }
+            }
+          }
+
+          }
+
+
+
+
+        }
+
+
+      }
+
+
+      
+    }
+
+
+    
+
+
+
+  }
+
+
+

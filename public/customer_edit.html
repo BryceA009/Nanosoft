@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="author" content="Bryce Allies" />
+    <meta
+      name="description"
+      content="This page contains the Taco shop contact details"
+    />
+    <title>Tutorial Page</title>
+    <link rel="icon" href="favicon.ico" type="image/x-icon" />
+    <link rel="stylesheet" href="./css/style.css" type="text/css" />
+    <link rel="stylesheet" href="./css/customer_create.css" type="text/css" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"
+      integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    />
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <script src="https://unpkg.com/htmx.org@2.0.4"></script>
+  </head>
+
+  <body>
+    <div hx-trigger="load" hx-get="./components/side_nav.html"></div>
+
+    <main>
+      <header>
+        <div class="left_side_header">
+        </div>
+
+        <div class="right_side_header">
+        </div>
+      </header>
+      <form action="https://eu.httpbin.org/post" x-data = "customerForm" method = "POST">
+      <section>
+
+        <article id="header">
+          <div class="left_side_header">
+            <p>Customer Edit</p>
+          </div>
+          <div class="right_side_header">
+            
+          </div>
+        </article>
+
+        <article id="customer">
+          <div class="customer_create">
+            <div class="block">
+
+              <div class="top_row">
+                <p>Create customer</p>
+              </div>
+
+              <div class="row">
+                <div class="personal_info">
+                  
+                  <div class = "names">
+                    <div class="input">
+                      <p>Customer first name:</p>
+                      <input x-model = "customer.first_name" type="text" placeholder="Enter first name">
+                    </div>
+
+                    <div class="input">
+                      <p >Customer last name:</p>
+                      <input  x-model = "customer.last_name" type="text" placeholder="Enter last name">
+                    </div>
+                  </div>
+
+                  <div class = "contact_details">
+                    <div class="input">
+                      <p >Customer email:</p>
+                      <input x-model = "customer.email" type="text" placeholder="Enter email">
+                    </div>
+
+                    <div class="input">
+                      <p>Customer contact number:</p>
+                      <input x-model = "customer.phone" type="text" placeholder="Enter phone">
+                    </div>
+                  </div>
+
+
+                  <div class="address">
+                    <p>Customer Address:</p>
+                    <textarea x-model = "customer.address" type="text" placeholder="Enter address"></textarea>
+                  </div>
+
+
+                  
+                  
+                </div>
+              </div>
+
+              <div class="bottom_row">
+                <button type="button" @click="save"> Save</button>
+              </div>
+
+            </div>
+          </div>
+        </article>
+      </section>
+    </form>
+    </main>
+    <script src="./js/customer_edit.js"></script>
+    <script src="./js/side_bar.js"></script>
+  </body>
+</html>

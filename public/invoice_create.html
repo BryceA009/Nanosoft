@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="author" content="Bryce Allies" />
+    <meta
+      name="description"
+      content="This page contains the Taco shop contact details"
+    />
+    <title>Tutorial Page</title>
+    <link rel="icon" href="favicon.ico" type="image/x-icon" />
+    <link rel="stylesheet" href="./css/style.css" type="text/css" />
+    <link rel="stylesheet" href="./css/invoice_create.css" type="text/css" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"
+      integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    />
+    <script
+      defer
+      src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"
+    ></script>
+    <script src="https://unpkg.com/htmx.org@2.0.4"></script>
+  </head>
+
+  <body>
+    <div hx-trigger="load" hx-get="./components/side_nav.html"></div>
+
+    <main>
+      <header>
+        <div class="left_side_header"></div>
+
+        <div class="right_side_header"></div>
+      </header>
+      <form
+        action="https://eu.httpbin.org/post"
+        x-data="invoiceForm"
+        method="POST">
+
+        <section>
+          <article id="header">
+            <div class="left_side_header">
+              <h3>New Invoice</h3>
+            </div>
+            <div class="right_side_header"></div>
+          </article>
+
+          <article id="invoice">
+            <div class="invoice_create">
+              <div class="block">
+                <div class="input_details">
+
+                  <div class="status">
+                    <label for="status">Status</label>
+
+                    <select
+                      name="status"
+                      id="status"
+                      x-model="invoice.status_id">
+
+                      <option value="">Select status</option>
+
+                      <template
+                        x-for="status in statusOptions"
+                        :key="status.id">
+                        <option
+                          :value="status.id"
+                          x-text="status.name"
+                        ></option>
+                      </template>
+                    </select>
+
+                    <template x-if="errors.includes('status_id')">
+                      <p class="error">missing status</p>
+                    </template>
+                  </div>
+
+                  <div class="date_item">
+                    <label for="date_input"> Issue Date: </label>
+
+                    <input
+                      type="date"
+                      id="issue_date_input"
+                      name="issue_date"
+                      x-model="invoice.invoice_date"
+                    />
+
+                    <template x-if="errors.includes('invoice_date')">
+                      <p class="error">missing date</p>
+                    </template>
+                  </div>
+
+                  <div class="date_item">
+                    <label for="date_input"> Due Date: </label>
+
+                    <input
+                      type="date"
+                      id="due_date_input"
+                      name="due_date"
+                      x-model="invoice.due_date"
+                    />
+
+                    <template x-if="errors.includes('due_date')">
+                      <p class="error">missing date</p>
+                    </template>
+                  </div>
+                </div>
+
+                <div class="address">
+                  <div class="from">
+                    <p class="title">From:</p>
+                    <div class="from_details">
+                      <p class="name" x-text="company.company_name"></p>
+                      <p class="detail_info" x-text="company.address"></p>
+                      <p class="detail_info" x-text="company.phone"></p>
+                      <p class="detail_info" x-text="company.email"></p>
+                    </div>
+                  </div>
+
+                  <div class="to">
+                    <div class="top_line">
+                      <p>To:</p>
+                      <select
+                        x-model="invoice.customer_id"
+                        @change="getCustomer(invoice.customer_id)"
+                      >
+                        <option value="">Select name</option>
+
+                        <template
+                          x-for="list_customer in customerList"
+                          :key="list_customer.id"
+                        >
+                          <option
+                            :value="list_customer.id"
+                            x-text="list_customer.first_name + ' ' + list_customer.last_name"
+                          ></option>
+                        </template>
+                      </select>
+                    </div>
+
+                    <div class="from_details">
+                      <p x-text="customer.name" class="name"></p>
+                      <p x-text="customer.address"></p>
+                      <p x-text="customer.phone"></p>
+                      <p x-text="customer.email"></p>
+                    </div>
+
+                    <template x-if="errors.includes('invoiceName_to')">
+                      <p class="error">missing reciever</p>
+                    </template>
+                  </div>
+                </div>
+
+                <div class="details">
+                  <p>Details</p>
+                  <div class="items" id="items">
+                    <div class="body">
+                      <div class="table_container">
+                        <table id="invoice_table">
+                          <thead>
+                            <th>#</th>
+                            <th>Product</th>
+                            <th class="amount">QTY</th>
+                            <th class="amount">PRICE</th>
+                            <th class="amount">Total</th>
+                            <th>Action</th>
+                          </thead>
+                          <tbody>
+                            <template x-for="line in invoice.invoice_lines">
+                              <tr>
+                                <td>
+                                  <span x-text="line.index"></span>
+                                </td>
+                                <td>
+                                  <input
+                                    x-model="line.description"
+                                    type="text"
+                                    placeholder="Description"
+                                  />
+                                </td>
+
+                                <td class="amount">
+                                  <input
+                                    x-model.float="line.qty"
+                                    type="number"
+                                  />
+                                </td>
+
+                                <td class="amount">
+                                  <input
+                                    x-model.float="line.price"
+                                    type="number"
+                                  />
+                                </td>
+
+                                <td class="total">
+                                  <p x-text="calcAmount(line)"></p>
+                                </td>
+
+                                <td>
+                                  <button
+                                    type="button"
+                                    @click="deleteRow(line.index)"
+                                    class="icon-btn"
+                                    x-data="{ showTooltip: false }"
+                                    @mouseenter="showTooltip = true"
+                                    @mouseleave="showTooltip = false"
+                                  >
+                                    <i
+                                      class="fa fa-trash"
+                                      aria-hidden="true"
+                                    ></i>
+                                    <span x-show="showTooltip" class="tooltip">
+                                      Delete row
+                                    </span>
+                                  </button>
+                                </td>
+                              </tr>
+                            </template>
+                          </tbody>
+                        </table>
+                      </div>
+
+                      <div class="footer">
+                        <div class="buttons">
+                          <button type="button" class="add" x-on:click="addRow">
+                            + Add item
+                          </button>
+                        </div>
+                        <template x-if="errors.includes('invoice_lines')">
+                          <p class="error">missing invoice data</p>
+                        </template>
+                        <div class="grand_total" id="grand_total">
+                          <div class="inputs">
+                            <div class="input_value">
+                              <label for="discount_rate"> Discount (%):</label>
+                              <input
+                                type="number"
+                                name="discount_rate"
+                                x-model.number="invoice.discount_rate"
+                              />
+                            </div>
+
+                            <div class="input_value">
+                              <label for="tax_rate"> Tax (%):</label>
+                              <input
+                                type="number"
+                                name="tax_rate"
+                                x-model.number="invoice.tax_rate"
+                              />
+                            </div>
+                          </div>
+
+                          <div class="calculated_values">
+                            <div class="sub_total">
+                              <p>Sub total:</p>
+                              <div class="amount">
+                                <span x-text="invoice.invoiceCurrency"></span
+                                ><span x-text="subTotal"></span>
+                              </div>
+                            </div>
+
+                            <div class="discount_amount">
+                              <p>Discount:</p>
+                              <div class="amount">
+                                <span x-text="invoice.invoiceCurrency"></span
+                                ><span x-text="discount"></span>
+                              </div>
+                            </div>
+
+                            <div class="tax_amount">
+                              <p>Tax:</p>
+
+                              <div class="amount">
+                                <span x-text="invoice.invoiceCurrency"></span
+                                ><span x-text="tax_calculation"></span>
+                              </div>
+                            </div>
+
+                            <div class="grand_total_amount">
+                              <p>Grand total:</p>
+                              <div class="amount">
+                                <span x-text="invoice.invoiceCurrency"></span
+                                ><span x-text="grandTotal"></span>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="last_row">
+                  <div class="note">
+                    <p>Invoice Note:</p>
+                    <textarea
+                      x-model="invoice.invoice_note"
+                      placeholder="It was a pleasure working with you and your team. We hope you will keep us in mind for future freelance projects. Thank You!"
+                    ></textarea>
+
+                    <template x-if="errors.includes('invoice_note')">
+                      <p class="error">Missing invoice note</p></template
+                    >
+                  </div>
+
+                  <div class="currency_save">
+                    <div class="currency">
+                      <label for="currency">Set currency:</label>
+
+                      <select
+                        name="currency"
+                        id="currency"
+                        x-model="invoice.currency_id">
+                        <option value="">Select currency</option>
+
+                        <template
+                          x-for="currency in currencyOptions"
+                          :key="currency.id">
+                          <option
+                            :value="currency.id"
+                            x-text="currency.name"> 
+                          </option>
+                        </template>
+                      </select>
+
+                      <template x-if="errors.includes('currency_id')">
+                        <p class="error">missing currency</p>
+                      </template>
+                    </div>
+
+                    <button type="button" @click="save">Save</button>
+                  </div>
+                </div>
+
+              </div>
+            </div>
+          </article>
+        </section>
+      </form>
+    </main>
+    <script src="./js/invoice_create.js"></script>
+    <script src="./js/side_bar.js"></script>
+  </body>
+</html>

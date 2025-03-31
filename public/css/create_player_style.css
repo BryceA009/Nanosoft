@@ -1,0 +1,148 @@
+main {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  background-color: #060e0e;
+
+  header {
+    display: flex;
+    align-items: center;
+
+    .page_label {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+
+      h1,
+      i {
+        font-size: 1.5rem;
+        color: white;
+      }
+
+      i {
+        font-size: 1.5rem;
+        color: white;
+      }
+    }
+
+    a {
+      background-color: rgba(188, 186, 186, 0.565);
+      padding: 15px;
+      border-radius: 10px;
+      color: white;
+
+      &:hover {
+        background-color: rgb(197, 192, 192);
+      }
+    }
+  }
+
+  article {
+    flex: 1;
+    overflow-y: auto;
+    display: flex;
+    justify-content: center;
+    padding: 40px;
+
+    #player_photo{
+        background-color: rgba(255, 0, 0, 0.714);
+    }
+
+    .block {
+      color: rgb(177, 174, 174);
+      width: 60%;
+      background-color: #1a2020;
+      border-radius: 10px;
+      display: flex;
+      flex-direction: column;
+      justify-self: center;
+
+      gap: 30px;
+      padding: 25px;
+
+      .input_group {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+
+        label{
+            font-size: 20px;
+        }
+
+        input {
+          height: 50px;
+          border-radius: 25px;
+          background-color: #1a2020;
+          border: solid grey;
+          font-size: 1.5rem;
+          color: rgb(188, 188, 188);
+          padding: 0px 10px;
+        }
+
+        button {
+
+          color: white;
+          padding: 20px;
+          border-radius: 25px;
+          border: none;
+          font-size: 1.4rem;
+
+          &:hover {
+            background-color: rgba(255, 68, 0, 0.915);
+          }
+        }
+
+        select {
+          height: 50px;
+          border-radius: 25px;
+          background-color: #1a2020;
+          border: solid grey;
+          color: rgb(151, 148, 148);
+          font-size: 1.5rem;
+          padding: 0px 10px;
+        }
+      }
+    }
+
+    .positions {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+
+      fieldset {
+        padding: 20px;
+        display: flex;
+        gap: 25px;
+        flex-wrap: wrap;
+        text-align: center;
+
+        legend {
+          font-size: 1.2rem;
+        }
+
+        p {
+          font-size: 20px;
+          input[type="checkbox"] {
+            width: 20px;
+            height: 20px;
+          }
+        }
+      }
+    }
+
+    .submit {
+      button {
+        width: 100%;
+        background-color: rgba(44, 194, 194, 0.722);
+        color: white;
+        padding: 20px;
+        border-radius: 20px;
+        font-size: 1.3rem;
+
+        &:hover {
+          background-color: rgb(16, 187, 187);
+        }
+      }
+    }
+  }
+}

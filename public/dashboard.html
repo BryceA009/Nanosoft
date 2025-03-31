@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="author" content="Bryce Allies" />
+    <meta
+      name="description"
+      content="This page contains the Taco shop contact details"
+    />
+    <title>Tutorial Page</title>
+    <link rel="icon" href="favicon.ico" type="image/x-icon" />
+    <link rel="stylesheet" href="./css/style.css" type="text/css" />
+    <link rel="stylesheet" href="./css/dashboard_style.css" type="text/css" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"
+      integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    />
+  </head>
+
+  <body>
+    <aside x-data="sideBar">
+      <div class="heading">
+          <h3>Invoice Document</h3>
+      </div>
+  
+      <div class="side_bar_nav">
+          <p>Navigation</p>  
+          <ul>
+              <li @click = "invoiceToggle">
+                  <i class="fa fa-cogs"></i>
+                  <p x-text = "showInvoiceTab ? 'Invoice -' : 'Invoice +'"></p>
+              </li>
+
+              <div x-show="showInvoiceTab">
+                <li>
+                  <a href="invoice_list.html">Invoice list</a>
+                </li>
+
+                <li>
+                  <a href="invoice_create.html">Create invoice</a>
+                </li>
+              </div>
+  
+              <li @click = "customerToggle">
+                  <i class="fa fa-cogs"></i>
+                  <p x-text = "showCustomerTab ? 'Customer -' : 'Customer +'"></p>
+              </li>
+  
+              <div x-show="showCustomerTab">
+                  <li>
+                      <a href="customer_list.html">Customer list</a>
+                  </li>
+
+                  <li>
+                    <a href="cutomer_create.html">Create customer </a>
+                </li>
+  
+                  <li>
+                    <a href="invoice_create.html">Create invoice</a>
+                  </li>
+              </div>
+
+          </ul>
+      </div>
+    </aside>
+
+    <main>
+      <header>
+
+        <div class="left_side_header">
+
+          <button></button>
+          <button></button>
+          <button></button>
+
+        </div>
+
+        <div class="right_side_header">
+
+          <button></button>
+          <button></button>
+          <button></button>
+          <button></button>
+          <button></button>
+          <button></button>
+          <button></button>
+
+        </div>
+
+      </header>
+
+
+    </main>
+    <script src="./js/side_bar.js"></script>
+  </body>
+</html>

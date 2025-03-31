@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="author" content="Bryce Allies" />
+    <meta
+      name="description"
+      content="This page contains the Taco shop contact details"
+    />
+    <title>Tutorial Page</title>
+    <link rel="icon" href="favicon.ico" type="image/x-icon" />
+    <link rel="stylesheet" href="./css/style.css" type="text/css" />
+    <link rel="stylesheet" href="./css/invoice_list.css" type="text/css" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"
+      integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    />
+
+    <script
+      defer
+      src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"
+    ></script>
+    <script src="https://unpkg.com/htmx.org@2.0.4"></script>
+  </head>
+
+  <body>
+    <div hx-trigger="load" hx-get="./components/side_nav.html"></div>
+
+    <main>
+      <header>
+        <div class="left_side_header">
+        </div>
+
+        <div class="right_side_header">
+        </div>
+      </header>
+      <form
+        action="https://eu.httpbin.org/post"
+        x-data="invoiceList"
+        method="POST"
+      >
+        <section>
+          <div class="title">
+            <p>Invoice List</p>
+          </div>
+
+          <article>
+            <div class="block">
+              <div class="header">
+                <div class="filter">
+                  <div
+                    @click="statusFilterFormat('all')"
+                    class="filter_block all_block"
+                    :class="{'all' : status_filter === 'all'}"
+                  >
+                    <p>All</p>
+                    <p class="all_number" x-text="statusCount('all')"></p>
+                  </div>
+
+                  <div
+                    @click="statusFilterFormat(7)"
+                    class="filter_block paid_block"
+                    :class="{'paid' : status_filter === 7}"
+                  >
+                    <p>Paid</p>
+                    <p class="paid_number" x-text="statusCount(7)"></p>
+                  </div>
+
+                  <div
+                    @click="statusFilterFormat(8)"
+                    class="filter_block unpaid_block"
+                    :class="{'unpaid' : status_filter === 8}"
+                  >
+                    <p>Unpaid</p>
+                    <p class="unpaid_number" x-text="statusCount(8)"></p>
+                  </div>
+
+                  <div
+                    @click="statusFilterFormat(9)"
+                    class="filter_block cancelled_block"
+                    :class="{'cancelled' : status_filter === 9}">
+                    <p>Cancelled</p>
+                    <p
+                      class="cancelled_number"
+                      x-text="statusCount(9)"
+                    ></p>
+                  </div>
+                </div>
+                <a href="invoice_create.html" class="create_invoice">
+                  + Add Invoice
+                </a>
+              </div>
+
+              <div class="table_container">
+                <table id="invoice_table">
+                  <thead>
+                    <th><button type="button" @click="sortInvoice('id')">Invoice ID</button></th>
+                    <th><button type="button" @click="sortInvoice('first_name')">First name</button></th>
+                    <th><button type="button" @click="sortInvoice('last_name')">Last name</button></th>
+                    <th><button type="button" @click="sortInvoice('invoice_date')">Create Date</button></th>
+                    <th><button type="button" @click="sortInvoice('due_date')">Due Date</button></th>
+                    <th><button type="button" @click="sortInvoice('status_id')">Status</button></th>
+                    <th>Action</th>
+                  </thead>
+
+                  <template x-for="invoice in invoiceList">
+                    <template
+                      x-if="invoice.status_id === status_filter || status_filter === 'all' ">
+                      <tr>
+                        <td>
+                          <span x-text="invoice.id"></span>
+                        </td>
+
+                        <td class="name">
+                          <span
+                            x-text="invoice.first_name"></span>
+                        </td>
+
+                        <td class="name">
+                          <span
+                            x-text="invoice.last_name"></span>
+                        </td>
+
+
+                        <td>
+                          <span x-text="invoice.invoice_date"></span>
+                        </td>
+
+                        <td>
+                          <span x-text="invoice.due_date"></span>
+                        </td>
+
+                        <td class="status_block">
+                          <span
+                            x-text="getStatus(invoice.status_id)"
+                            style="text-transform: capitalize"
+                            :class="statusFormat(invoice.status_id)"
+                          ></span>
+                        </td>
+
+                        <td class="actions">
+                          <button
+                            type="button"
+                            @click="deleteInvoice(invoice.id)"
+                            class="icon-btn"
+                            x-data="{ showTooltip: false }"
+                            @mouseenter="showTooltip = true"
+                            @mouseleave="showTooltip = false">
+
+                            <i class="fa fa-trash" aria-hidden="true"></i>
+
+                            <span x-show="showTooltip" class="tooltip">
+                              Delete 
+                            </span>
+
+                          </button>
+
+                          <a x-bind:href="'invoice_edit.html?invoice_id=' + invoice.id" class="icon-btn" 
+                          x-data="{ showTooltip: false }"
+                          @mouseenter="showTooltip = true" 
+                          @mouseleave="showTooltip = false">
+
+                         <i class="fa fa-pencil" aria-hidden="true"></i>
+
+                         <span x-show="showTooltip" class="tooltip">Edit</span>
+                          </a>
+
+                          <a x-bind:href="'invoice_view.html?invoice_id=' + invoice.id" class="icon-btn view" 
+                          x-data="{ showTooltip: false }"
+                          @mouseenter="showTooltip = true" 
+                          @mouseleave="showTooltip = false">
+
+                          <i class="fa fa-eye" aria-hidden="true"></i>
+
+                         <span x-show="showTooltip" class="tooltip">View</span>
+                          </a>
+
+                        </td>
+                      </tr>
+                    </template>
+                  </template>
+                </table>
+              </div>
+            </div>
+          </article>
+        </section>
+      </form>
+    </main>
+    <script src="./js/invoice_list.js"></script>
+    <script src="./js/side_bar.js"></script>
+  </body>
+</html>

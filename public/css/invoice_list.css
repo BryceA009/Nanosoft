@@ -1,0 +1,288 @@
+body {
+  overflow-y: hidden;
+}
+
+main {
+  section {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    overflow-x: auto;
+    padding: 50px 35px;
+
+    .title {
+      font-size: 20px;
+    }
+
+    .error {
+      color: #fe3131;
+      font-size: 0.7em;
+    }
+  }
+
+  .block {
+    justify-self: center;
+    background-color: white;
+    width: 100%;
+    border-radius: 10px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 20px;
+    gap: 20px;
+    padding-bottom: 15px;
+
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      width: 95%;
+
+      .filter {
+        margin-top: 20px;
+        display: flex;
+        align-items: center;
+
+        .filter_block {
+          display: flex;
+          gap: 10px;
+          border-bottom: solid rgb(197, 196, 196);
+          padding: 10px;
+          align-items: center;
+
+          p {
+            font-size: 12px;
+          }
+
+          p.all_number {
+            padding: 5px 10px;
+            background-color: #e0effe;
+            color: #82befb;
+            font-weight: bold;
+          }
+
+          p.paid_number {
+            padding: 5px 10px;
+            background-color: #eaf8e7;
+            color: #8bd87c;
+            font-weight: bold;
+          }
+
+          p.unpaid_number {
+            padding: 5px 10px;
+            background-color: #fff5e6;
+            color: #ffca80;
+            font-weight: bold;
+          }
+
+          p.cancelled_number {
+            padding: 5px 10px;
+            background-color: #ffe8ea;
+            color: #ff99a0;
+            font-weight: bold;
+          }
+        }
+
+        .all {
+          border-bottom: solid blue;
+        }
+
+        .all_block:hover {
+          background-color: #f0f6fc;
+          border-radius: 4px;
+        }
+
+        .paid {
+          border-bottom: solid green;
+        }
+
+        .paid_block:hover {
+          background-color: #eaf8e7a5;
+          border-radius: 4px;
+        }
+
+        .unpaid {
+          border-bottom: solid orange;
+        }
+
+        .unpaid_block:hover {
+          background-color: #fdf6eb8c;
+          border-radius: 4px;
+        }
+
+        .cancelled {
+          border-bottom: solid red;
+        }
+
+        .cancelled_block:hover {
+          background-color: #fff6f7bf;
+          border-radius: 4px;
+        }
+      }
+    }
+
+    a.create_invoice {
+      margin-top: 20px;
+      background-color: #007af9;
+      color: white;
+      border-radius: 2px;
+      width: 100px;
+      height: 30px;
+      font-size: 11px;
+      white-space: nowrap;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+  }
+
+  .table_container {
+    gap: 15px;
+    width: 95%;
+    overflow-x: auto;
+    align-self: center;
+    justify-self: center;
+
+    table {
+      padding: 5px;
+      width: 100%;
+      border-collapse: collapse;
+      color: black;
+
+      th,
+      td {
+        padding: 8px;
+        font-size: 12px;
+        box-sizing: border-box;
+        white-space: nowrap;
+      }
+
+      td {
+        padding: 30px 0px;
+   
+        text-align: left;
+        padding-left: 0px;
+        padding-right: 10px;
+      }
+
+      th {
+        background-color: #f5f5f5;
+        text-align: start;
+      }
+
+      tr {
+        border: 1px solid #f1f1f1;
+      }
+
+      tr:hover {
+        background-color: #fafafa;
+      }
+
+      td span {
+        padding: 5px 10px;
+        border-radius: 5px;
+        
+      }
+
+      td.actions {
+        display: flex;
+        align-items: center;
+        justify-content: start;
+
+        gap: 10px;
+        padding-left: 10px;
+
+        button {
+          background-color: transparent;
+          border: none;
+          color: red;
+          font-size: 18px;
+          
+
+
+          :hover {
+            color: rgb(164, 12, 12);
+          }
+        }
+
+        a {
+          display: flex;
+          color: #007af9;
+          font-size: 18px;
+          margin-left: 20px;
+          border-radius: 10px;
+
+          :hover {
+            color: #034182;
+          }
+        }
+
+        a.view{
+
+          display: flex;
+          color: #a4a7aa;
+          font-size: 18px;
+          
+          margin-left: 20px;
+
+          
+          :hover {
+            color: #57595a;
+          }
+
+
+        }
+      }
+
+      td.status_block {
+        span {
+          margin-left: 6px;
+        }
+      }
+
+      .icon-btn {
+        position: relative; 
+        display: inline-block;
+        background: none; 
+        border: none; 
+        cursor: pointer; 
+      }
+
+      .tooltip {
+        visibility: hidden;
+        position: absolute;
+        bottom: 120%; 
+        left: 50%;
+        transform: translateX(-50%);
+        background-color: #333;
+        color: #fff;
+        padding: 5px;
+        border-radius: 5px;
+        font-size: 12px;
+        opacity: 0;
+        transition: opacity 0.3s ease, visibility 0.3s ease;
+        z-index: 1;
+      }
+
+      [x-show="showTooltip"] {
+        visibility: visible;
+        opacity: 1;
+      }
+
+
+      /* Status formatting */
+      .status_cancelled {
+        background-color: #ffe8ea;
+        color: #f87b83;
+      }
+      .status_paid {
+        background-color: #eaf8e7;
+        color: #68db51;
+      }
+      .status_unpaid {
+        background-color: #fff5e6;
+        color: #f4b255;
+      }
+    }
+  }
+}

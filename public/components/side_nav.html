@@ -1,0 +1,85 @@
+
+    
+
+<aside x-data="sideBar">
+    <div class="heading">
+        <h3>Nano Invoice</h3>
+    </div>
+
+    <div class="side_bar_nav">
+        <ul>
+            <li @click = "invoiceToggle" :class = "{'active': showInvoiceTab}">
+
+                <div class = "left_side">
+                    <i class="fa fa-file-text" aria-hidden="true"></i>
+                    <p>Invoice</p>
+                </div>
+
+                <div class = "right_side">
+                    <p x-text = "showInvoiceTab ? '-' : '+'"></p>
+                </div>
+
+            </li>
+
+            <div x-show="showInvoiceTab" class="drop_down">
+                <a href="invoice_list.html" :class="{ 'drop_down_active': currentPageCheck('invoice_list.html')}" >
+                <li >
+                <p>Invoice list</p>
+                </li>
+                </a>
+
+                <a href="invoice_create.html" :class="{ 'drop_down_active': currentPageCheck('invoice_create.html')}">
+                <li >
+                <p>Create invoice</p>
+                </li>
+                </a>
+            </div>
+
+            <li @click = "customerToggle" :class = "{'active': showCustomerTab}">
+                <div class = "left_side">
+                <i class="fa fa-user" aria-hidden="true"></i>
+                <p>Customer</p>
+                </div>
+                <div class = "right_side">
+                <p x-text = "showCustomerTab ? '-' : '+'"></p>
+                </div>
+            </li>
+
+            <div x-show="showCustomerTab" class="drop_down">
+
+                <a href="customer_list.html" :class="{ 'drop_down_active': currentPageCheck('customer_list.html')}" >
+                <li >
+                    <p>Customer list</p>
+                </li>
+                </a>
+
+
+                <a href="customer_create.html" :class="{ 'drop_down_active': currentPageCheck('customer_create.html')}" >
+                <li >
+                   <p>Create customer</p> 
+                </li>
+                </a>
+
+                <a href="invoice_create.html" :class="{ 'drop_down_active': currentPageCheck('invoice_create.html')}" >
+                <li >
+                  <p>Create invoice</p>
+                </li>
+                </a>
+
+            </div>
+
+            <a href="settings.html" >
+            <li>
+                <div class = "left_side" :class = "{'active': showSettingsTab}">
+                    <i class="fa fa-cog" aria-hidden="true"></i>
+                    <p>Settings</p>
+                </div>
+           
+            </li>
+            </a>
+        </ul>
+    </div>
+</aside>
+
+<script src="js/side_bar.js"></script>
+

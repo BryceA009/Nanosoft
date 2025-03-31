@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="author" content="Bryce Allies" />
+    <meta
+      name="description"
+      content="This page contains the Taco shop contact details"
+    />
+    <title>Tutorial Page</title>
+    <link rel="icon" href="favicon.ico" type="image/x-icon" />
+    <link rel="stylesheet" href="./css/style.css" type="text/css" />
+    <link rel="stylesheet" href="./css/invoice_view.css" type="text/css" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"
+      integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    />
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <script src="https://unpkg.com/htmx.org@2.0.4"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.12/pdfmake.min.js" integrity="sha512-axXaF5grZBaYl7qiM6OMHgsgVXdSLxqq0w7F4CQxuFyrcPmn0JfnqsOtYHUun80g6mRRdvJDrTCyL8LQqBOt/Q==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.12/vfs_fonts.min.js" integrity="sha512-EFlschXPq/G5zunGPRSYqazR1CMKj0cQc8v6eMrQwybxgIbhsfoO5NAMQX3xFDQIbFlViv53o7Hy+yCWw6iZxA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+  </head>
+
+  <body>
+    <div hx-trigger="load" hx-get="./components/side_nav.html"></div>
+
+    <main>
+      <header>
+        <div class="left_side_header">
+        </div>
+        <div class="right_side_header">
+        </div>
+      </header>
+
+
+      
+      
+      <form action="https://eu.httpbin.org/post" x-data = "viewForm" method = "POST">
+
+      <section>
+
+        <article id="header">
+          <div class="left_side_header">
+            <p>Invoice Summary</p>
+          </div>
+          <div class="right_side_header">
+          </div>
+        </article>
+
+        <article id="invoice">
+
+            <div class="block">
+              <div class = "pdf_save_tab">
+                <div class = "buttons">
+                  <button type="button">
+                    <i class="fa fa-pencil" aria-hidden="true"></i>
+                  </button>
+
+                  <button type="button" @click =  "generateInvoicePDF" class = "pdf_button">
+                    <i class="fa fa-download" aria-hidden="true"></i>
+                  </button>
+                  
+                  <button type="button">
+                    <i class="fa fa-print" aria-hidden="true"></i>
+                  </button>
+                  <button type="button">
+                    <i class="fa fa-share-alt" aria-hidden="true"></i>
+                  </button>
+
+                </div>
+              </div>
+
+              <div class="top_row">
+                <div class ="left_side">
+                  <div class ="main_heading">
+                    <div class = "title">Nano Invoice</div>
+
+                    <span x-text="invoice.invoiceStatus"
+                    style="text-transform: capitalize"
+                    :class="statusFormat(invoice.invoiceStatus)"></span>
+
+                  </div>
+                  <span class = "id" x-text = "invoice._id"></span>
+                </div>
+
+                <div class ="right_side">
+                  <div class = "date_item">
+                    <label for="current_date">Date:</label>
+                    <p name = "current_date" x-text = "invoice.invoice_date">01/05/2023</p>
+                  </div>
+                  <div class = "date_item">
+                    <label for="due_date">Due Date:</label>
+                    <p name = "due_date" x-text = "invoice.due_date"></p>
+                  </div>
+                </div>
+          
+              </div>
+
+              <div class = "address">
+                <div class = address_block>
+                  <p class = "label">From:</p>
+
+                  <div class = "address_lines">
+                    <p x-text = "company.company_name"></p>
+                    <p x-text = "company.address"></p>
+                    <p x-text = "company.phone"></p>
+                    <p x-text = "company.email"></p>
+                  </div>
+                </div>
+
+                <div class = address_block>
+
+                  <p class = "label">To:</p>
+
+                  <div class = "address_lines">
+                    <p x-text = "customer.first_name"></p>
+                    <p x-text = "customer.address"></p>
+                    <p x-text = "customer.phone"></p>
+                    <p x-text = "customer.email"></p>
+                  </div>
+
+                </div>
+              </div>
+
+              <div class = "table">
+                <table>
+                  <thead>
+                    <th>#</th>
+                    <th>Description</th>
+                    <th class = "input_values">QTY</th>
+                    <th class = "input_values">Price</th>
+                    <th class="amount">Amount</th>
+                  </thead>
+
+                  <tbody>
+                    <template x-for="item in invoice.invoice_lines">
+                    <tr>
+                      <td x-text = "item.index"></td>
+                      <td x-text = "item.description"></td>
+                      <td x-text = "item.qty" class = "input_values"></td>
+                      <td x-text = "item.price" class = "input_values"></td>
+                      <td x-text = "calcAmount(item)" class="amount" ></td>
+                    </tr>
+                    </template>
+                  </tbody>
+                </table>
+              </div>
+
+              <div class = "calculated_values">
+
+                  <div class="sub_total">
+                    <p>Sub total:</p>
+                    <div class = "amount" >
+                    <span x-text = "invoice.invoiceCurrency" class = "currency"></span> <span x-text="subTotal()"></span>
+                    </div>
+                    
+                  </div>
+
+                  <div class="discount_amount">
+                    <p>Discount:</p>
+                    <div class = "amount">
+                    <span x-text = "invoice.invoiceCurrency" class = "currency"></span> <span x-text="discount()"></span>
+                    </div>
+                  </div>
+
+                  <div class="tax_amount">
+                    <p>Tax:</p>
+
+                    <div class = "amount">
+                      <span x-text = "invoice.invoiceCurrency" class = "currency"></span> <span x-text="tax_calculation()"></span>
+                    </div>
+
+                  </div>
+
+                  <div class="grand_total_amount">
+                    <p>Grand total:</p>
+                    <div class = "amount">
+                      <span x-text = "invoice.invoiceCurrency" class = "currency"></span> <span x-text="grandTotal()"></span>
+                    </div>
+
+                  </div>
+
+              </div>
+
+              <div class = "footer">
+                <p class="notes">Notes:</p>
+                <p x-text = "invoice.invoice_note">
+              </div>
+
+            </div>
+
+        </article>
+      </section>
+
+
+    </form>
+    </main>
+    <script src ="./js/pdf.js"></script>
+    <script src="./js/invoice_view.js"></script>
+    <script src="./js/side_bar.js"></script>
+  </body>
+</html>

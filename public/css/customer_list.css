@@ -1,0 +1,210 @@
+body {
+  overflow-y: hidden;
+}
+
+main {
+  section {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    overflow-x: auto;
+    overflow-y: auto;
+    padding: 50px 35px;
+    flex:1;
+    height: calc(100vh - 200px);
+    position: relative;
+
+    .error {
+      color: #fe3131;
+      font-size: 0.7em;
+    }
+
+
+  }
+}
+
+.header{
+  
+  border-left: None;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  
+  
+  font-size: 20px;
+
+}
+
+
+.block {
+  justify-self: center;
+  background-color: white;
+  width: 100%;
+  border-radius: 10px;
+  display: flex;
+  flex-direction: column;
+  outline: solid rgb(213, 213, 212);
+
+  margin-top: 20px;
+
+  header {
+    display: flex;
+    align-items: center;
+    justify-content: end;
+
+    a {
+      padding: 10px;
+      background-color: #007af9;
+      border-radius: 5px;
+      color: white;
+      font-size: 10px;
+    }
+  }
+
+  .table_container {
+    width: 100%;
+    overflow-x: auto;
+    align-self: center;
+    justify-self: center;
+
+    table {
+      padding: 5px;
+      width: 100%;
+      border-collapse: collapse;
+
+      thead {
+        th {
+          text-align: start;
+        }
+      }
+
+      button {
+        background-color: rgb(228, 62, 62);
+        border: none;
+        padding: 5px;
+        color: white;
+        border-radius: 5px;
+      }
+
+      a {
+        display: flex;
+        p {
+          padding: 6px 13px;
+          background-color: rgb(232, 164, 29);
+          align-self: center;
+          color: white;
+          border-radius: 5px;
+          font-size: 12px;
+        }
+      }
+
+      th,
+      td {
+        padding: 5px 20px;
+        font-size: 12px;
+
+        align-content: center;
+      }
+
+      td {
+        padding: 15px 20px;
+      }
+
+      .name {
+        display: flex;
+        align-self: center;
+        gap: 5px;
+        height: 40px;
+        font-weight:600;
+
+        .firstName {
+          align-self: center;
+          white-space: nowrap;
+        }
+
+        .lastName {
+          align-self: center;
+          white-space: nowrap;
+        }
+      }
+
+      tr:hover {
+        background-color: #fafafa;
+      }
+
+      tr{
+        border: 1px solid #f1f1f1;
+      }
+    }
+    th {
+      background-color: rgb(237, 236, 236);
+      border: none;
+    }
+
+    td.actions {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+
+      .delete-btn {
+        background-color: transparent;
+        border: none;
+        color: red;
+        font-size: 15px;
+
+        :hover {
+          color: rgb(164, 12, 12);
+        }
+      }
+
+      .edit-btn {
+        display: flex;
+        color: #007af9;
+        font-size: 15px;
+
+        :hover {
+          color: #034182;
+        }
+      }
+
+      .invoice-btn {
+        display: flex;
+        color: #787978;
+        font-size: 15px;
+
+        :hover {
+          color: #bcbcbc;
+        }
+      }
+    }
+
+    .icon-btn {
+      position: relative; 
+      display: inline-block;
+      background: none; 
+      border: none; 
+      cursor: pointer; 
+    }
+
+    .tooltip {
+      visibility: hidden;
+      position: absolute;
+      bottom: 120%; 
+      left: 50%;
+      transform: translateX(-50%);
+      background-color: #333;
+      color: #fff;
+      padding: 5px;
+      border-radius: 5px;
+      font-size: 12px;
+      opacity: 0;
+      transition: opacity 0.3s ease, visibility 0.3s ease;
+      z-index: 1;
+    }
+
+    [x-show="showTooltip"] {
+      visibility: visible;
+      opacity: 1;
+    }
+  }
+}
