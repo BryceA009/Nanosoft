@@ -84,8 +84,14 @@ const getCustomersLike = async (req, res, next) => {
             params.push(`%${last_name}%`);
         }
 
-        if (whereClauses.length > 0) {
+        if (whereClauses.length > 1) {
             query += ` WHERE ` + whereClauses.join(' AND ');
+        }
+
+        if (whereClauses.length == 1){
+            whereClauses.push(`upper(last_name) LIKE $${params.length + 1}`);
+            params.push(`%${first_name}%`);
+            query += ` WHERE ` + whereClauses.join(' OR ');
         }
 
         query += ` ORDER BY ${order_by} ${sort.toUpperCase()}`;
