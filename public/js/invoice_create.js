@@ -77,11 +77,8 @@ document.addEventListener("alpine:init", () => {
     async save() {
       this.validateForm();
       if (this.errors.length == 0) {
-        console.log(this.invoice)
-        console.log(this.invoice.invoice_lines)
-        debugger;
         await this.createInvoice();
-        // window.location.href = "invoice_list.html";
+        window.location.href = "invoice_list.html";
       } else {
         this.errors.forEach(function (key) {
           console.log(`${key} is missing`);

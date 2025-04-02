@@ -32,7 +32,7 @@
         <div class="right_side_header">
         </div>
       </header>
-      <form action="https://eu.httpbin.org/post" x-data = "customerList" method = "POST">
+      <form action="https://eu.httpbin.org/post" x-data = "customerList" @submit.prevent>
       <section>
         <article id="header">
           <div class="left_side_header">
@@ -47,27 +47,92 @@
         <p class="header">Customer list</p>
         <div class = "block">
           <header>
+            <div class="search">
+              <label for="search_box">
+                <p>Search</p>
+              </label>
+              <input type="text" id="search_box" x-model="name_search" @keydown.enter="searchFilter" >
+            </div>
             <a href="customer_create.html">+ Add Customer</a>
           </header>
 
         <div class="table_container">
           <table id = "customer_table">
             <thead>
-              <th>Name</th>
-              <th>Email</th>
-              <th>Phone</th>
+
+              <th>
+
+                <button type="button" @click="sortCustomer('first_name')">
+                  <div class = "left_side">
+                    <p>First Name</p>
+                  </div>
+  
+                  <div class = "right_side" x-show = "sort_category === 'first_name'">
+                    <i class="fa fa-caret-up" aria-hidden="true" x-show = "sort_direction === 'asc'"></i>
+                    <i class="fa fa-caret-down" aria-hidden="true" x-show = "sort_direction === 'desc'"></i>     
+                  </div>
+
+                </button>
+              
+              </th>
+
+              <th>
+
+                <button type="button" @click="sortCustomer('last_name')">
+                  <div class = "left_side">
+                    <p>Last Name</p>
+                  </div>
+  
+                  <div class = "right_side" x-show = "sort_category === 'last_name'">
+                    <i class="fa fa-caret-up" aria-hidden="true" x-show = "sort_direction === 'asc'"></i>
+                    <i class="fa fa-caret-down" aria-hidden="true" x-show = "sort_direction === 'desc'"></i>     
+                  </div>
+
+                </button>
+              
+              </th>
+
+              <th>
+
+                <button type="button" @click="sortCustomer('email')">
+                  <div class = "left_side">
+                    <p>Email</p>
+                  </div>
+                  <div class = "right_side" x-show = "sort_category === 'email'">
+                    <i class="fa fa-caret-up" aria-hidden="true" x-show = "sort_direction === 'asc'"></i>
+                    <i class="fa fa-caret-down" aria-hidden="true" x-show = "sort_direction === 'desc'"></i>     
+                  </div>
+                </button>
+              </th>
+
+              <th>
+                  <button type="button" @click="sortCustomer('phone')">
+                  <div class = "left_side">
+                    <p>Phone</p>
+                  </div>
+  
+                  <div class = "right_side" x-show = "sort_category === 'phone'">
+                    <i class="fa fa-caret-up" aria-hidden="true" x-show = "sort_direction === 'asc'"></i>
+                    <i class="fa fa-caret-down" aria-hidden="true" x-show = "sort_direction === 'desc'"></i>     
+                  </div>
+                </button>
+              </th>
+
               <th>Action</th>
             </thead>
 
             <template x-for="customer in customerList">
               <tr>
-                <td class = "name">
-                  <span x-text="customer.first_name" class = "firstName"></span>
-                  <span x-text="customer.last_name" class = "lastName"></span>
+                <td>
+                  <span x-text="customer.first_name"></span>
                 </td>
 
                 <td>
-                  <span x-text="customer.email" ></span>
+                  <span x-text="customer.last_name"></span>
+                </td>
+
+                <td>
+                  <span x-text="customer.email"></span>
                 </td>
 
                 <td>

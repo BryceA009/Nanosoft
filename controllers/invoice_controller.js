@@ -18,7 +18,7 @@ const pool = new Pool({
 
 const getInvoices = async (req, res, next) => {
     try {
-        const {customer_id, status_id, order_by = 'id', sort = 'asc' } = req.query;
+        let {customer_id, status_id, order_by = 'id', sort = 'asc' } = req.query;
         let query = `SELECT 
                 i.id, 
                 status_id,
@@ -45,10 +45,17 @@ const getInvoices = async (req, res, next) => {
             whereClauses.push(`status_id = $${params.length + 1}`);
             params.push(status_id);
         }
-
+        
         if (customer_id) {
-            whereClauses.push(`customer_id= $${params.length + 1}`);
-            params.push(customer_id);
+            if (!Array.isArray(customer_id)) {
+                customer_id = [customer_id]; 
+            }
+        
+            let startIndex = params.length + 1; 
+            let placeholders = customer_id.map((_, index) => `$${startIndex + index}`).join(", ");
+            
+            whereClauses.push(`customer_id IN (${placeholders})`);
+            params.push(...customer_id);
         }
 
         if (whereClauses.length > 0) {

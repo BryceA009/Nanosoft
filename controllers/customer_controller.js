@@ -13,14 +13,94 @@ const pool = new Pool({
 // @desc Get all customers
 
 const getCustomers = async (req, res, next) => {
+
     try {
-        const result = await pool.query('SELECT * FROM customers');
+        const {order_by = 'id', sort = 'asc' } = req.query;
+        let query = `SELECT
+                id,
+                first_name, 
+                last_name,
+                address, 
+                phone, 
+                email
+                FROM customers`;
+
+        let params = [];
+        let whereClauses = [];
+
+        // Validate allowed columns for ordering to prevent SQL injection
+        const validColumns = ['id', 'first_name', 'last_name', 'address', 'phone', 'email'];
+        const validSorts = ['asc', 'desc'];
+
+        if (!validColumns.includes(order_by) || !validSorts.includes(sort.toLowerCase())) {
+            return res.status(400).json({ error: "Invalid order_by or sort parameter" });
+        }
+
+        query += ` ORDER BY ${order_by} ${sort.toUpperCase()}`;
+
+        // Execute query
+        const result = await pool.query(query, params);
         res.json(result.rows);
-    } catch (err) {
+
+    }
+
+    catch (err) {
         console.error('Error fetching customers:', err);
         res.status(500).json({ error: 'Internal server error' });
     }
-  };
+};
+
+const getCustomersLike = async (req, res, next) => {
+
+    try {
+        const {first_name = '', last_name = '', order_by = 'id', sort = 'asc' } = req.query;
+        let query = `SELECT
+                id,
+                first_name, 
+                last_name,
+                address, 
+                phone, 
+                email
+                FROM customers`;
+
+        let params = [];
+        let whereClauses = [];
+
+        // Validate allowed columns for ordering to prevent SQL injection
+        const validColumns = ['id', 'first_name', 'last_name', 'address', 'phone', 'email'];
+        const validSorts = ['asc', 'desc'];
+
+        if (!validColumns.includes(order_by) || !validSorts.includes(sort.toLowerCase())) {
+            return res.status(400).json({ error: "Invalid order_by or sort parameter" });
+        }
+
+        if (first_name) {
+            whereClauses.push(`upper(first_name) LIKE $${params.length + 1}`);
+            params.push(`%${first_name}%`);
+        }
+
+        if (last_name) {
+            whereClauses.push(`upper(last_name) LIKE $${params.length + 1}`);
+            params.push(`%${last_name}%`);
+        }
+
+        if (whereClauses.length > 0) {
+            query += ` WHERE ` + whereClauses.join(' AND ');
+        }
+
+        query += ` ORDER BY ${order_by} ${sort.toUpperCase()}`;
+
+        // Execute query
+        const result = await pool.query(query, params);
+        res.json(result.rows);
+
+    }
+
+    catch (err) {
+        console.error('Error fetching customers:', err);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+};
 
 const getCustomer = async (req, res, next) => {
     try {
@@ -91,4 +171,4 @@ const updateCustomer = async (req, res) => {
 
 
 
-module.exports = { getCustomers, getCustomer, addCustomer, deleteCustomer, updateCustomer };
+module.exports = { getCustomers, getCustomersLike, getCustomer, addCustomer, deleteCustomer, updateCustomer };

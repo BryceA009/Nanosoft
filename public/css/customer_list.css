@@ -50,7 +50,7 @@ main {
   header {
     display: flex;
     align-items: center;
-    justify-content: end;
+    justify-content: space-between;
 
     a {
       padding: 10px;
@@ -62,7 +62,8 @@ main {
   }
 
   .table_container {
-    width: 100%;
+    gap: 15px;
+    width: 95%;
     overflow-x: auto;
     align-self: center;
     justify-self: center;
@@ -71,140 +72,133 @@ main {
       padding: 5px;
       width: 100%;
       border-collapse: collapse;
-
-      thead {
-        th {
-          text-align: start;
-        }
-      }
-
-      button {
-        background-color: rgb(228, 62, 62);
-        border: none;
-        padding: 5px;
-        color: white;
-        border-radius: 5px;
-      }
-
-      a {
-        display: flex;
-        p {
-          padding: 6px 13px;
-          background-color: rgb(232, 164, 29);
-          align-self: center;
-          color: white;
-          border-radius: 5px;
-          font-size: 12px;
-        }
-      }
+      color: black;
 
       th,
       td {
-        padding: 5px 20px;
+        padding: 8px;
         font-size: 12px;
-
-        align-content: center;
+        box-sizing: border-box;
+        white-space: nowrap;
       }
 
       td {
-        padding: 15px 20px;
+        padding: 30px 0px;
+        text-align: left;
+        padding-left: 0px;
+        padding-right: 10px;
       }
 
-      .name {
-        display: flex;
-        align-self: center;
-        gap: 5px;
-        height: 40px;
-        font-weight:600;
-
-        .firstName {
-          align-self: center;
-          white-space: nowrap;
+      th {
+        background-color: #f5f5f5;
+        text-align: start;
+        button{
+          display:flex;
+          gap: 5px;
+          border: none;
+          font-size: 12px;
+          font-weight: bold;
         }
+      }
 
-        .lastName {
-          align-self: center;
-          white-space: nowrap;
-        }
+      tr {
+        border: 1px solid #f1f1f1;
       }
 
       tr:hover {
         background-color: #fafafa;
       }
 
-      tr{
-        border: 1px solid #f1f1f1;
-      }
-    }
-    th {
-      background-color: rgb(237, 236, 236);
-      border: none;
-    }
-
-    td.actions {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-
-      .delete-btn {
-        background-color: transparent;
-        border: none;
-        color: red;
-        font-size: 15px;
-
-        :hover {
-          color: rgb(164, 12, 12);
-        }
+      td span {
+        padding: 5px 10px;
+        border-radius: 5px;
+        
       }
 
-      .edit-btn {
+      td.actions {
         display: flex;
-        color: #007af9;
-        font-size: 15px;
+        align-items: center;
+        justify-content: start;
 
-        :hover {
-          color: #034182;
+        gap: 10px;
+        padding-left: 10px;
+
+        button {
+          background-color: transparent;
+          border: none;
+          color: red;
+          font-size: 18px;
+          
+
+
+          :hover {
+            color: rgb(164, 12, 12);
+          }
+        }
+
+        a {
+          display: flex;
+          color: #007af9;
+          font-size: 18px;
+          margin-left: 20px;
+          border-radius: 10px;
+
+          :hover {
+            color: #034182;
+          }
+        }
+
+        a.invoice-btn{
+
+          display: flex;
+          color: #a4a7aa;
+          font-size: 18px;
+          
+          margin-left: 20px;
+
+          
+          :hover {
+            color: #57595a;
+          }
+
+
         }
       }
 
-      .invoice-btn {
-        display: flex;
-        color: #787978;
-        font-size: 15px;
-
-        :hover {
-          color: #bcbcbc;
+      td.status_block {
+        span {
+          margin-left: 6px;
         }
       }
-    }
 
-    .icon-btn {
-      position: relative; 
-      display: inline-block;
-      background: none; 
-      border: none; 
-      cursor: pointer; 
-    }
+      .icon-btn {
+        position: relative; 
+        display: inline-block;
+        background: none; 
+        border: none; 
+        cursor: pointer; 
+      }
 
-    .tooltip {
-      visibility: hidden;
-      position: absolute;
-      bottom: 120%; 
-      left: 50%;
-      transform: translateX(-50%);
-      background-color: #333;
-      color: #fff;
-      padding: 5px;
-      border-radius: 5px;
-      font-size: 12px;
-      opacity: 0;
-      transition: opacity 0.3s ease, visibility 0.3s ease;
-      z-index: 1;
-    }
+      .tooltip {
+        visibility: hidden;
+        position: absolute;
+        bottom: 120%; 
+        left: 50%;
+        transform: translateX(-50%);
+        background-color: #333;
+        color: #fff;
+        padding: 5px;
+        border-radius: 5px;
+        font-size: 12px;
+        opacity: 0;
+        transition: opacity 0.3s ease, visibility 0.3s ease;
+        z-index: 1;
+      }
 
-    [x-show="showTooltip"] {
-      visibility: visible;
-      opacity: 1;
+      [x-show="showTooltip"] {
+        visibility: visible;
+        opacity: 1;
+      }
     }
   }
 }
