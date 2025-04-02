@@ -23,8 +23,6 @@ document.addEventListener("alpine:init", () => {
     async fetchInvoices(status_filter) {
 
 
-      console.log(this.multiple_customer_sql)
-
       if (this.customer_id) {
         if (status_filter == "all") {
           const url = `api/invoices?customer_id=${this.customer_id}`;
@@ -38,26 +36,9 @@ document.addEventListener("alpine:init", () => {
           this.invoiceList = data;
         }
       }
-
-      if (this.multiple_customer_sql && this.customer_id == null) {
-        if (status_filter == "all") {
-          const url = `api/invoices?${this.multiple_customer_sql}`;
-          console.log(url)
-          const response = await fetch(url, { method: "GET" });
-          const data = await response.json();
-          this.invoiceList = data;
-
-        } else {
-          const url = `api/invoices?status_id=${status_filter}&${this.multiple_customer_sql}`;
-          const response = await fetch(url, { method: "GET" });
-          const data = await response.json();
-          this.invoiceList = data;
-        }
-
-      }
-      
+  
       if (this.customer_id == null && this.multiple_customer_sql == ""){
-        console.log("here")
+       
         if (status_filter == "all") {
           const url = "api/invoices";
           const response = await fetch(url, { method: "GET" });
@@ -240,33 +221,32 @@ document.addEventListener("alpine:init", () => {
     },
 
     async searchFilter(){
-      this.multiple_customer_sql =  "";
-      let parts = this.name_search.split(" ");
-      let firstName = (parts[0] || '').toUpperCase(); // Convert to uppercase
-      let lastName = (parts.slice(1).join(' ') || '').toUpperCase(); // Convert to uppercase
+ 
+
+      if (this.status_filter == "all") {
+        const url = `api/invoices?customer_data=${this.name_search}`;
+        const response = await fetch(url, { method: "GET" });
+        const data = await response.json();
+        this.invoiceList = data;
+
+      } 
       
-
-      const url = `/api/customers/like?first_name=${firstName}&last_name=${lastName}`;
-      const response = await fetch(url, { method: "GET" });
-      const data = await response.json();
-
-      data.forEach(customer => {
-
-        if (this.multiple_customer_sql){
-          this.multiple_customer_sql = this.multiple_customer_sql + '&' + `customer_id=${customer.id}`
-        }
-
-        else {
-          this.multiple_customer_sql = this.multiple_customer_sql + `customer_id=${customer.id}`
-        }
-        
-      })
-
-      if (this.multiple_customer_sql == "" && (firstName !== "" || lastName !== "")){
-        this.multiple_customer_sql = "none"
+      else {
+        const url = `api/invoices?status_id=${this.status_filter}&customer_data=${this.name_search}`;
+        const response = await fetch(url, { method: "GET" });
+        const data = await response.json();
+        this.invoiceList = data;
       }
 
-      this.fetchInvoices(this.status_filter)
+      this.invoiceList.forEach((element) => {
+        const date = new Date(element.invoice_date);
+        const formattedDate = date.toISOString().split("T")[0]; // YYYY-MM-DD
+        element.invoice_date = formattedDate;
+
+        const due_date = new Date(element.due_date);
+        const formattedDueDate = due_date.toISOString().split("T")[0]; // YYYY-MM-DD
+        element.due_date = formattedDueDate;
+      });
 
     }
 

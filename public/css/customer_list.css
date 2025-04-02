@@ -52,6 +52,18 @@ main {
     align-items: center;
     justify-content: space-between;
 
+    .search{
+      display:flex;
+      flex-direction: column;
+      font-size: 12px;
+      gap: 5px;
+
+      input{
+        padding: 3px;
+        border: solid #d7d7d9;
+      }
+    }
+
     a {
       padding: 10px;
       background-color: #007af9;

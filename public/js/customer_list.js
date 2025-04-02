@@ -5,7 +5,7 @@ document.addEventListener("alpine:init", () => {
         sort_category: "",
         sort_direction: "asc",
         name_search: "",
-        multiple_customer_sql: "",
+
 
         init(){
             this.fetchCustomers();
@@ -13,19 +13,11 @@ document.addEventListener("alpine:init", () => {
 
         async fetchCustomers() {
           
-            if (this.multiple_customer_sql == ""){
-              const url = "/api/customers"
-              const response = await fetch(url, {method: "GET"});
-              const data = await response.json();
-              this.customerList = data;
-            }
+          const url = "/api/customers"
+          const response = await fetch(url, {method: "GET"});
+          const data = await response.json();
+          this.customerList = data;
 
-            else {
-              const response = await fetch(this.multiple_customer_sql, {method: "GET"});
-              const data = await response.json();
-              this.customerList = data;
-
-            }
 
         },
 
@@ -63,22 +55,13 @@ document.addEventListener("alpine:init", () => {
           },
         
         async searchFilter(){
-            this.multiple_customer_sql =  "";
-            let parts = this.name_search.split(" ");
-            let firstName = (parts[0] || '').toUpperCase(); 
-            let lastName = (parts.slice(1).join(' ') || '').toUpperCase(); 
-            const url = `/api/customers/like?first_name=${firstName}&last_name=${lastName}`;
-            
-            if (firstName == "" && lastName == "") {
-              this.multiple_customer_sql = ""
-            }
-            else {
-              this.multiple_customer_sql = url
 
-            }
+            const url = `/api/customers/like?name_search=${this.name_search}`;
             
-            this.fetchCustomers();
-      
+            const response = await fetch(url, {method: "GET"});
+            const data = await response.json();
+            this.customerList = data;
+            
       
           }
 

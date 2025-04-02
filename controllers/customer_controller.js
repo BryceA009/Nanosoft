@@ -53,7 +53,7 @@ const getCustomers = async (req, res, next) => {
 const getCustomersLike = async (req, res, next) => {
 
     try {
-        const {first_name = '', last_name = '', order_by = 'id', sort = 'asc' } = req.query;
+        const {name_search = '', order_by = 'id', sort = 'asc' } = req.query;
         let query = `SELECT
                 id,
                 first_name, 
@@ -65,6 +65,11 @@ const getCustomersLike = async (req, res, next) => {
 
         let params = [];
         let whereClauses = [];
+
+
+        let parts = name_search.split(" ");
+        let first_name = (parts[0] || '').toUpperCase().trim(); 
+        let last_name = (parts.slice(1).join(' ') || '').toUpperCase().trim(); 
 
         // Validate allowed columns for ordering to prevent SQL injection
         const validColumns = ['id', 'first_name', 'last_name', 'address', 'phone', 'email'];
