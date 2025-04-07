@@ -44,8 +44,10 @@ main {
   display: flex;
   flex-direction: column;
   outline: solid rgb(213, 213, 212);
-
+  height: 100%;
   margin-top: 20px;
+  gap: 5px;
+  justify-content: space-between;
 
   header {
     display: flex;
@@ -80,6 +82,7 @@ main {
     align-self: center;
     justify-self: center;
 
+
     table {
       padding: 5px;
       width: 100%;
@@ -95,7 +98,7 @@ main {
       }
 
       td {
-        padding: 30px 0px;
+        padding: 10px 0px;
         text-align: left;
         padding-left: 0px;
         padding-right: 10px;
@@ -139,7 +142,7 @@ main {
           background-color: transparent;
           border: none;
           color: red;
-          font-size: 18px;
+          font-size: 15px;
           
 
 
@@ -151,7 +154,7 @@ main {
         a {
           display: flex;
           color: #007af9;
-          font-size: 18px;
+          font-size: 15px;
           margin-left: 20px;
           border-radius: 10px;
 
@@ -164,7 +167,7 @@ main {
 
           display: flex;
           color: #a4a7aa;
-          font-size: 18px;
+          font-size: 15px;
           
           margin-left: 20px;
 
@@ -210,6 +213,62 @@ main {
       [x-show="showTooltip"] {
         visibility: visible;
         opacity: 1;
+      }
+    }
+  }
+
+  footer {
+    display:flex;
+    justify-content: space-between;
+    width: 95%;
+    align-self: center;
+    justify-self: center;
+  
+    margin-bottom: 10px;
+
+    .left_side{
+      display:flex;
+      gap: 5px;
+    }
+
+    .right_side{
+      display:flex;
+      gap: 50px;
+      .page_size {
+        display: flex;
+        gap: 10px;
+      }
+
+      .index {
+        display: flex;
+        gap: 10px;
+
+        i {
+          margin-top: 8px;
+          font-size: 12px;
+        }
+        .boundary_number{
+          background-color: #d7d7d9;
+          padding:4px 8px;
+          border-radius: 15px;
+        }
+
+        .boundary_number:hover{
+          background-color: #a2a2a2;
+          padding:4px 8px;
+          border-radius: 15px;
+        }
+
+        .middle_number{
+          background-color: #4b4b4e;
+          padding:4px 8px;
+          border-radius: 15px;
+          color: white;
+        }
+
+        .filler {
+          margin-top: 5px;
+        }
       }
     }
   }

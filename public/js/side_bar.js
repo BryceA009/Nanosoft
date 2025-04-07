@@ -4,6 +4,7 @@ document.addEventListener("alpine:init", () => {
         showCustomerTab: false,
         showInvoiceTab: false,
         showSettingsTab: false,
+        showMaintenanceTab: false,
 
         invoice_tabs:["invoice_list.html" , "invoice_create.html"],
         customer_tabs:["customer_list.html", "customer_create.html"],
@@ -31,8 +32,6 @@ document.addEventListener("alpine:init", () => {
 
           console.log(window.location.href)
 
-
-
             if (this.showInvoiceTab == false){
               this.showInvoiceTab = true
             }
@@ -59,9 +58,11 @@ document.addEventListener("alpine:init", () => {
             this.showSettingsTab = true;
           }
 
-        },
+          if (window.location.href.includes("maintenance.html")){
+            this.showMaintenanceTab = true;
+          }
 
-        
+        },
 
         currentPageCheck(url){
           return (window.location.href.includes(url))

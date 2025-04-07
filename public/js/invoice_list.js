@@ -72,25 +72,25 @@ document.addEventListener("alpine:init", () => {
 
       // Check if sorting by the same category
       if (this.status_filter !== "all" && this.sort_category === category) {
-        var url = `api/invoices?order_by=${category}&sort=${this.sort_direction}&status_id=${this.status_filter}${customer_link}`;
+        var url = `api/invoices?order_by=${category}&sort=${this.sort_direction}&status_id=${this.status_filter}${customer_link}&search_data=${this.name_search}`;
 
         this.sort_direction = this.sort_direction === "desc" ? "asc" : "desc";
       }
 
       if (this.status_filter !== "all" && this.sort_category != category) {
-        var url = `api/invoices?order_by=${category}&sort=asc&status_id=${this.status_filter}${customer_link}`;
+        var url = `api/invoices?order_by=${category}&sort=asc&status_id=${this.status_filter}${customer_link}&search_data=${this.name_search}`;
 
         this.sort_direction = "desc";
       }
 
       if (this.status_filter == "all" && this.sort_category == category) {
-        var url = `api/invoices?order_by=${category}&sort=${this.sort_direction}${customer_link}`;
+        var url = `api/invoices?order_by=${category}&sort=${this.sort_direction}${customer_link}&search_data=${this.name_search}`;
 
         this.sort_direction = this.sort_direction === "desc" ? "asc" : "desc";
       }
 
       if (this.status_filter == "all" && this.sort_category != category) {
-        var url = `api/invoices?order_by=${category}&sort=asc${customer_link}`;
+        var url = `api/invoices?order_by=${category}&sort=asc${customer_link}&search_data=${this.name_search}`;
 
         this.sort_direction = "desc";
       }
@@ -224,15 +224,15 @@ document.addEventListener("alpine:init", () => {
  
 
       if (this.status_filter == "all") {
-        const url = `api/invoices?customer_data=${this.name_search}`;
+        const url = `api/invoices?search_data=${this.name_search}`;
         const response = await fetch(url, { method: "GET" });
         const data = await response.json();
         this.invoiceList = data;
 
-      } 
+      }
       
       else {
-        const url = `api/invoices?status_id=${this.status_filter}&customer_data=${this.name_search}`;
+        const url = `api/invoices?status_id=${this.status_filter}&search_data=${this.name_search}`;
         const response = await fetch(url, { method: "GET" });
         const data = await response.json();
         this.invoiceList = data;

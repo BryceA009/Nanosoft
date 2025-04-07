@@ -1,3 +1,5 @@
+
+
 document.addEventListener("alpine:init", () => {
     Alpine.data("settingsForm", () => ({
     
@@ -15,6 +17,8 @@ document.addEventListener("alpine:init", () => {
     async init(){
       await this.fetchSettings();
       this.show = false;
+
+
       
 
     },

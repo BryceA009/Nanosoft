@@ -13,7 +13,7 @@ const getInvoices = async (req, res, next) => {
   try {
     let {
       customer_id,
-      customer_data,
+      search_data,
       status_id,
       order_by = "id",
       sort = "asc",
@@ -28,9 +28,20 @@ const getInvoices = async (req, res, next) => {
                 c.last_name 
                 FROM invoices i
                   Inner Join customers c on i.customer_id = c.id `;
+
     let params = [];
     let whereClauses = [];
-    let multiple_customer_sql = "";
+    let searchClauses = [];
+    let first_part = ""
+    let second_part = ""
+
+
+    if (search_data) {
+      let parts = search_data.split(" ");
+      first_part = (parts[0] || '').toUpperCase().trim(); 
+      second_part = (parts.slice(1).join(' ') || '').toUpperCase().trim(); 
+    }
+
 
     // Validate allowed columns for ordering to prevent SQL injection
     const validColumns = [
@@ -71,26 +82,40 @@ const getInvoices = async (req, res, next) => {
       params.push(...customer_id);
     }
 
-    if (customer_data) {
-      let customer_list = [];
-
-      const url = `http://localhost:3000/api/customers/like?name_search=${customer_data}`;
-      const response = await fetch(url, { method: "GET" });
-      const customers = await response.json();
-
-      customers.forEach((customer) => {
-        customer_list.push(customer.id);
-      });
-
-      whereClauses.push(`customer_id IN (${customer_list.join(",")})`);
-
+    if (first_part) {
+      searchClauses.push(`first_name iLIKE '%${first_part}%'`);
     }
 
-    if (whereClauses.length > 0) {
+    if (second_part) {
+      searchClauses.push(`last_name iLIKE '%${second_part}%'`);
+    }
+
+    if (first_part && second_part) {
+      query += ` WHERE ` + searchClauses.join(' AND ')
+
+        if (whereClauses.length > 0) {
+          query += ' AND ' + whereClauses.join(' AND ');
+        }
+    }
+
+    if (first_part && second_part === "") {
+      searchClauses.push(`CAST(invoice_date AS TEXT) LIKE '%${first_part}%'`);
+      searchClauses.push(`CAST(due_date AS TEXT) LIKE '%${first_part}%'`);
+      
+      query += ` WHERE ` + searchClauses.join(' OR ');
+  
+      if (whereClauses.length > 0) {
+          query += ' AND ' + whereClauses.join(' AND ');
+      }
+  }
+
+    if (whereClauses.length > 0 && first_part == "") {
       query += " WHERE " + whereClauses.join(" AND ");
     }
 
     query += ` ORDER BY ${order_by} ${sort.toUpperCase()}`;
+
+    console.log(query)
     // Execute query
     const result = await pool.query(query, params);
     
@@ -138,7 +163,6 @@ const addInvoice = async (req, res) => {
         tax_rate,
       ]
     );
-    console.log(result);
     const newInvoiceId = result.rows[0].id;
     invoice_lines.forEach(async (line) => {
       await pool.query(

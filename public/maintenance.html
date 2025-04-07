@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="author" content="Bryce Allies" />
+    <meta
+      name="description"
+      content="This page contains the Taco shop contact details"
+    />
+    <title>Tutorial Page</title>
+    <link rel="icon" href="favicon.ico" type="image/x-icon" />
+    <link rel="stylesheet" href="./css/style.css" type="text/css" />
+    <link rel="stylesheet" href="./css/maintenance.css" type="text/css" />
+    <link
+      rel="stylesheet"
+      href="css/icons.min.css"
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    />
+    <script defer src="js/alpine.min.js"></script>
+    <script src="js/htmx.min.js"></script>
+  </head>
+
+  <body>
+    <div hx-trigger="load" hx-get="../components/side_nav.html"></div>
+
+    <main>
+      <header>
+        <div class="left_side_header">
+        </div>
+        <div class="right_side_header">
+        </div>
+      </header>
+    
+      <form action="https://eu.httpbin.org/post" x-data = "settingsForm" method = "POST">
+
+      <section>
+
+        <div class = "overlay" x-show="show">
+          <div 
+              x-transition
+              class="update_notification">
+              Updated
+
+          </div>
+        </div>
+
+        <article id="header">
+          <div class="left_side_header">
+            <p>Maintenance</p>
+          </div>
+          <div class="right_side_header">
+            
+          </div>
+        </article>
+
+        <article id="company">
+          <div class="company_edit">
+            <div class="block">
+              <div class="top_row">
+                <p>Insert dummy data</p>
+              </div>
+
+                <div class="company_info">
+
+                  <div class="input">
+                    <p>No. of customers</p>
+                    <div class="insert">
+                        <input type="number" max = "1000000" x-model = "number_of_customers">
+                        <button type="button" @click = "addCustomers()"> Insert</button>
+                        <button type="button" class = "delete" @click = "clearCustomers()"> Clear</button>
+                    </div>
+                   </div>
+
+
+                   <div class="input">
+                    <p>No. of invoices </p>
+                    <div class="insert">
+                        <input type="number">
+                        <button type="button"> Insert</button>
+                    </div>
+                   </div>
+
+                </div>
+
+
+            </div>
+          </div>
+        </article>
+      </section>
+
+
+      </form>
+    </main>
+
+    <script src="./js/maintenance.js"></script>
+    <script src="./js/side_bar.js"></script>
+  </body>
+</html>

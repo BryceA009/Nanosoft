@@ -1,4 +1,5 @@
 const { Pool } = require('pg');
+const { faker } = require('@faker-js/faker');
 
 // PostgreSQL connection configuration
 const pool = new Pool({
@@ -13,102 +14,128 @@ const pool = new Pool({
 // @desc Get all customers
 
 const getCustomers = async (req, res, next) => {
+try {
+    const { order_by = 'id', page_size = 10, page_number = 1, sort = 'asc' } = req.query;
+    let query = `SELECT
+                (SELECT COUNT(*) FROM customers) AS total_customers,
+                c.id,
+                c.first_name, 
+                c.last_name,
+                c.address, 
+                c.phone, 
+                c.email,
+                COALESCE(COUNT(i.id), 0) AS invoice_count
+                FROM customers AS c
+                LEFT JOIN invoices AS i ON c.id = i.customer_id
+                GROUP BY c.id, c.first_name, c.last_name, c.address, c.phone, c.email
+                
+                `;  // Corrected GROUP BY
 
+    let params = [];
+    let whereClauses = [];
+
+    // Validate allowed columns for ordering to prevent SQL injection
+    const validColumns = ['id', 'first_name', 'last_name', 'address', 'phone', 'email', 'invoice_count'];
+    const validSorts = ['asc', 'desc'];
+
+    if (!validColumns.includes(order_by) || !validSorts.includes(sort.toLowerCase())) {
+        return res.status(400).json({ error: "Invalid order_by or sort parameter" });
+    }
+
+    query += ` ORDER BY ${order_by} ${sort.toUpperCase()}`;
+    query += ` offset ${(page_number-1) * page_size}`;
+    query += ` limit ${page_size}`;
+
+    // Execute query
+    const result = await pool.query(query, params);
+    res.json(result.rows);     
+
+
+} catch (err) {
+    console.error('Error fetching customers:', err);
+    res.status(500).json({ error: 'Internal server error' });
+}
+};
+
+const getCustomersLike = async (req, res, next) => {
     try {
-        const {order_by = 'id', sort = 'asc' } = req.query;
-        let query = `SELECT
-                id,
-                first_name, 
-                last_name,
-                address, 
-                phone, 
-                email
-                FROM customers`;
+        const {
+            name_search = '',
+            page_size = 10,
+            page_number = 1,
+            order_by = 'id',
+            sort = 'asc'
+        } = req.query;
 
-        let params = [];
-        let whereClauses = [];
-
-        // Validate allowed columns for ordering to prevent SQL injection
-        const validColumns = ['id', 'first_name', 'last_name', 'address', 'phone', 'email'];
+        const validColumns = ['id', 'first_name', 'last_name', 'address', 'phone', 'email', 'invoice_count'];
         const validSorts = ['asc', 'desc'];
 
         if (!validColumns.includes(order_by) || !validSorts.includes(sort.toLowerCase())) {
             return res.status(400).json({ error: "Invalid order_by or sort parameter" });
         }
 
-        query += ` ORDER BY ${order_by} ${sort.toUpperCase()}`;
+        let params = [];
+        let whereClauses = [];
 
-        // Execute query
+        const parts = name_search.split(" ");
+        const first_name = (parts[0] || '').trim();
+        const last_name = (parts.slice(1).join(' ') || '').trim();
+
+        // Add dynamic filters
+        if (first_name) {
+            whereClauses.push(`(c.first_name ILIKE $${params.length + 1} OR c.last_name ILIKE $${params.length + 1} OR c.email ILIKE $${params.length + 1} OR c.phone ILIKE $${params.length + 1})`);
+            params.push(`%${first_name}%`);
+        }
+
+        if (last_name) {
+            whereClauses.push(`c.last_name ILIKE $${params.length + 1}`);
+            params.push(`%${last_name}%`);
+        }
+
+        const whereSQL = whereClauses.length > 0 ? `WHERE ${whereClauses.join(' AND ')}` : '';
+
+        const query = `
+            SELECT 
+                (SELECT COUNT(*) FROM customers c ${whereSQL}) AS total_customers,
+                c.id,
+                c.first_name,
+                c.last_name,
+                c.address,
+                c.phone,
+                c.email,
+                COALESCE(COUNT(i.id), 0) AS invoice_count
+            FROM customers c
+            LEFT JOIN invoices i ON c.id = i.customer_id
+            ${whereSQL}
+            GROUP BY c.id, c.first_name, c.last_name, c.address, c.phone, c.email
+            ORDER BY ${order_by} ${sort.toUpperCase()}
+            OFFSET ${(page_number - 1) * page_size}
+            LIMIT ${page_size};
+        `;
+
         const result = await pool.query(query, params);
         res.json(result.rows);
 
-    }
-
+    } 
+    
     catch (err) {
         console.error('Error fetching customers:', err);
         res.status(500).json({ error: 'Internal server error' });
     }
 };
 
-const getCustomersLike = async (req, res, next) => {
+const getTotalCustomers = async (req, res, next) => {
 
     try {
-        const {name_search = '', order_by = 'id', sort = 'asc' } = req.query;
-        let query = `SELECT
-                id,
-                first_name, 
-                last_name,
-                address, 
-                phone, 
-                email
-                FROM customers`;
-
-        let params = [];
-        let whereClauses = [];
-
-
-        let parts = name_search.split(" ");
-        let first_name = (parts[0] || '').toUpperCase().trim(); 
-        let last_name = (parts.slice(1).join(' ') || '').toUpperCase().trim(); 
-
-        // Validate allowed columns for ordering to prevent SQL injection
-        const validColumns = ['id', 'first_name', 'last_name', 'address', 'phone', 'email'];
-        const validSorts = ['asc', 'desc'];
-
-        if (!validColumns.includes(order_by) || !validSorts.includes(sort.toLowerCase())) {
-            return res.status(400).json({ error: "Invalid order_by or sort parameter" });
-        }
-
-        if (first_name) {
-            whereClauses.push(`upper(first_name) LIKE $${params.length + 1}`);
-            params.push(`%${first_name}%`);
-        }
-
-        if (last_name) {
-            whereClauses.push(`upper(last_name) LIKE $${params.length + 1}`);
-            params.push(`%${last_name}%`);
-        }
-
-        if (whereClauses.length > 1) {
-            query += ` WHERE ` + whereClauses.join(' AND ');
-        }
-
-        if (whereClauses.length == 1){
-            whereClauses.push(`upper(last_name) LIKE $${params.length + 1}`);
-            params.push(`%${first_name}%`);
-            query += ` WHERE ` + whereClauses.join(' OR ');
-        }
-
-        query += ` ORDER BY ${order_by} ${sort.toUpperCase()}`;
+        let query = `SELECT count(*) as total_customers
+                        from customers`;  
 
         // Execute query
-        const result = await pool.query(query, params);
-        res.json(result.rows);
-
-    }
-
-    catch (err) {
-        console.error('Error fetching customers:', err);
+        const result = await pool.query(query);
+        res.json(result.rows[0]);     
+    
+    } catch (err) {
+        console.error('Error fetching total:', err);
         res.status(500).json({ error: 'Internal server error' });
     }
 };
@@ -136,7 +163,18 @@ const addCustomer = async (req, res) => {
         console.error('Error inserting customer:', err);
         res.status(500).json({ error: 'Internal server error' });
     }
-   };
+};
+
+const clearCustomers = async (req, res) => {
+    try {
+        await pool.query(`Truncate table customers  RESTART IDENTITY`);
+        res.json("Customer data base cleared");
+    } catch (err) {
+        console.error('Error deleting customer:', err);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+
+}
 
 const deleteCustomer = async (req, res) => {
     try {
@@ -179,7 +217,67 @@ const updateCustomer = async (req, res) => {
     }
 };
 
+const addTestCustomers = async (req, res) => {
+
+    const { number_of_customers = 10 } = req.query;
+
+    const BATCH_SIZE = 10000;
+    var total_customers = Number(number_of_customers);
+    var num_batches = Math.ceil(total_customers / BATCH_SIZE);
+    let all_customers = 0;
+    
+    while (num_batches > 0) {
+        
+        let customer_batch = (total_customers - BATCH_SIZE) > 0 ? BATCH_SIZE : total_customers;
+        let customers = [];
+        for (let i = 0; i < customer_batch; i++) {
+          customers.push({
+            first_name: faker.person.firstName(),
+            last_name: faker.person.lastName(),
+            address: faker.location.streetAddress(),
+            phone: faker.phone.number({ style: 'international' }),
+            email: faker.internet.email(),
+          });
+        }
+      
+        // Prepare SQL placeholders and values
+        let values = [];
+        let placeholders = customers.map((cust, index) => {
+          const i = index * 5;
+          values.push(cust.first_name, cust.last_name, cust.address, cust.phone, cust.email);
+          return `($${i + 1}, $${i + 2}, $${i + 3}, $${i + 4}, $${i + 5})`;
+        }).join(', ');
+      
+        let query = 
+        `INSERT INTO customers (first_name, last_name, address, phone, email)
+        VALUES ${placeholders};
+        `;
+      
+        // Execute query
+        try {
+          const result = await pool.query(query, values);
+          console.log(`Inserted ${result.rowCount} customers.`);
+          all_customers += customer_batch
+
+        } 
+        
+        catch (err) {
+          console.error('Error inserting test customers:', err);
+          return res.status(500).json({ error: 'Internal server error' });
+        }
+      
+        num_batches -= 1;
+        total_customers -=  BATCH_SIZE;
+
+    }
+
+    res.status(201).json({ inserted: all_customers});
+
+};
 
 
 
-module.exports = { getCustomers, getCustomersLike, getCustomer, addCustomer, deleteCustomer, updateCustomer };
+
+
+
+module.exports = { getCustomers, getCustomersLike, getTotalCustomers, getCustomer, addCustomer, addTestCustomers, clearCustomers, deleteCustomer,  updateCustomer };

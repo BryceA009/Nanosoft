@@ -56,122 +56,174 @@
             <a href="customer_create.html">+ Add Customer</a>
           </header>
 
-        <div class="table_container">
-          <table id = "customer_table">
-            <thead>
+          <div class="table_container">
+            <table id = "customer_table">
+              <thead>
 
-              <th>
+                <th>
 
-                <button type="button" @click="sortCustomer('first_name')">
-                  <div class = "left_side">
-                    <p>First Name</p>
-                  </div>
-  
-                  <div class = "right_side" x-show = "sort_category === 'first_name'">
-                    <i class="fa fa-caret-up" aria-hidden="true" x-show = "sort_direction === 'asc'"></i>
-                    <i class="fa fa-caret-down" aria-hidden="true" x-show = "sort_direction === 'desc'"></i>     
-                  </div>
+                  <button type="button" @click="sortCustomer('first_name')">
+                    <div class = "left_side">
+                      <p>First Name</p>
+                    </div>
+    
+                    <div class = "right_side" x-show = "sort_category === 'first_name'">
+                      <i class="fa fa-caret-up" aria-hidden="true" x-show = "sort_direction === 'asc'"></i>
+                      <i class="fa fa-caret-down" aria-hidden="true" x-show = "sort_direction === 'desc'"></i>     
+                    </div>
 
-                </button>
-              
-              </th>
-
-              <th>
-
-                <button type="button" @click="sortCustomer('last_name')">
-                  <div class = "left_side">
-                    <p>Last Name</p>
-                  </div>
-  
-                  <div class = "right_side" x-show = "sort_category === 'last_name'">
-                    <i class="fa fa-caret-up" aria-hidden="true" x-show = "sort_direction === 'asc'"></i>
-                    <i class="fa fa-caret-down" aria-hidden="true" x-show = "sort_direction === 'desc'"></i>     
-                  </div>
-
-                </button>
-              
-              </th>
-
-              <th>
-
-                <button type="button" @click="sortCustomer('email')">
-                  <div class = "left_side">
-                    <p>Email</p>
-                  </div>
-                  <div class = "right_side" x-show = "sort_category === 'email'">
-                    <i class="fa fa-caret-up" aria-hidden="true" x-show = "sort_direction === 'asc'"></i>
-                    <i class="fa fa-caret-down" aria-hidden="true" x-show = "sort_direction === 'desc'"></i>     
-                  </div>
-                </button>
-              </th>
-
-              <th>
-                  <button type="button" @click="sortCustomer('phone')">
-                  <div class = "left_side">
-                    <p>Phone</p>
-                  </div>
-  
-                  <div class = "right_side" x-show = "sort_category === 'phone'">
-                    <i class="fa fa-caret-up" aria-hidden="true" x-show = "sort_direction === 'asc'"></i>
-                    <i class="fa fa-caret-down" aria-hidden="true" x-show = "sort_direction === 'desc'"></i>     
-                  </div>
-                </button>
-              </th>
-
-              <th>Action</th>
-            </thead>
-
-            <template x-for="customer in customerList">
-              <tr>
-                <td>
-                  <span x-text="customer.first_name"></span>
-                </td>
-
-                <td>
-                  <span x-text="customer.last_name"></span>
-                </td>
-
-                <td>
-                  <span x-text="customer.email"></span>
-                </td>
-
-                <td>
-                  <span x-text="customer.phone" ></span>
-                </td>
-
-                <td class="actions">
-
-                  <button type="button" @click= "deleteCustomer(customer.id)"  class="delete-btn icon-btn" 
-                  x-data="{ showTooltip: false }"
-                  @mouseenter="showTooltip = true"
-                  @mouseleave="showTooltip = false"> 
-                  <i class="fa fa-trash" aria-hidden="true"></i>
-                  <span x-show="showTooltip" class="tooltip">
-                    Delete 
-                  </span>
                   </button>
+                
+                </th>
 
-                  <a x-bind:href="'customer_edit.html?customer_id=' + customer.id" class="edit-btn icon-btn"      
-                  x-data="{ showTooltip: false }"
-                  @mouseenter="showTooltip = true" 
-                  @mouseleave="showTooltip = false">
-                  <i class="fa fa-pencil" aria-hidden="true"></i>
-                  <span x-show="showTooltip" class="tooltip">Edit</span>
-                  </a>
+                <th>
 
-                  <a x-bind:href="'invoice_list.html?customer_id=' + customer.id" class="invoice-btn icon-btn"      
-                  x-data="{ showTooltip: false }"
-                  @mouseenter="showTooltip = true" 
-                  @mouseleave="showTooltip = false">
-                  <i class="fa fa-file-text" aria-hidden="true"></i>
-                  <span x-show="showTooltip" class="tooltip">Invoices</span>
-                  </a>
-                </td>
+                  <button type="button" @click="sortCustomer('last_name')">
+                    <div class = "left_side">
+                      <p>Last Name</p>
+                    </div>
+    
+                    <div class = "right_side" x-show = "sort_category === 'last_name'">
+                      <i class="fa fa-caret-up" aria-hidden="true" x-show = "sort_direction === 'asc'"></i>
+                      <i class="fa fa-caret-down" aria-hidden="true" x-show = "sort_direction === 'desc'"></i>     
+                    </div>
 
-              </tr>
-            </template>
-          </table>
-        </div>
+                  </button>
+                
+                </th>
+
+                <th>
+
+                  <button type="button" @click="sortCustomer('email')">
+                    <div class = "left_side">
+                      <p>Email</p>
+                    </div>
+                    <div class = "right_side" x-show = "sort_category === 'email'">
+                      <i class="fa fa-caret-up" aria-hidden="true" x-show = "sort_direction === 'asc'"></i>
+                      <i class="fa fa-caret-down" aria-hidden="true" x-show = "sort_direction === 'desc'"></i>     
+                    </div>
+                  </button>
+                </th>
+
+                <th>
+                    <button type="button" @click="sortCustomer('phone')">
+                    <div class = "left_side">
+                      <p>Phone</p>
+                    </div>
+    
+                    <div class = "right_side" x-show = "sort_category === 'phone'">
+                      <i class="fa fa-caret-up" aria-hidden="true" x-show = "sort_direction === 'asc'"></i>
+                      <i class="fa fa-caret-down" aria-hidden="true" x-show = "sort_direction === 'desc'"></i>     
+                    </div>
+                  </button>
+                </th>
+
+                <th>
+                  <button type="button" @click="sortCustomer('invoice_count')">
+                    <div class = "left_side">
+                      <p>Invoices</p>
+                    </div>
+    
+                    <div class = "right_side" x-show = "sort_category === 'invoice_count'">
+                      <i class="fa fa-caret-up" aria-hidden="true" x-show = "sort_direction === 'asc'"></i>
+                      <i class="fa fa-caret-down" aria-hidden="true" x-show = "sort_direction === 'desc'"></i>     
+                    </div>
+                  </button>
+                </th>
+
+                <th>Action</th>
+              </thead>
+
+              <template x-for="customer in customerList">
+                <tr>
+                  <td>
+                    <span x-text="customer.first_name"></span>
+                  </td>
+
+                  <td>
+                    <span x-text="customer.last_name"></span>
+                  </td>
+
+                  <td>
+                    <span x-text="customer.email"></span>
+                  </td>
+
+                  <td>
+                    <span x-text="customer.phone" ></span>
+                  </td>
+
+                  <td>
+                    <span x-text="customer.invoice_count" ></span>
+                  </td>
+
+                  <td class="actions">
+
+                    <button type="button" @click= "deleteCustomer(customer.id)"  class="delete-btn icon-btn" 
+                    x-data="{ showTooltip: false }"
+                    @mouseenter="showTooltip = true"
+                    @mouseleave="showTooltip = false"> 
+                    <i class="fa fa-trash" aria-hidden="true"></i>
+                    <span x-show="showTooltip" class="tooltip">
+                      Delete 
+                    </span>
+                    </button>
+
+                    <a x-bind:href="'customer_edit.html?customer_id=' + customer.id" class="edit-btn icon-btn"      
+                    x-data="{ showTooltip: false }"
+                    @mouseenter="showTooltip = true" 
+                    @mouseleave="showTooltip = false">
+                    <i class="fa fa-pencil" aria-hidden="true"></i>
+                    <span x-show="showTooltip" class="tooltip">Edit</span>
+                    </a>
+
+                    <a x-bind:href="'invoice_list.html?customer_id=' + customer.id" class="invoice-btn icon-btn"      
+                    x-data="{ showTooltip: false }"
+                    @mouseenter="showTooltip = true" 
+                    @mouseleave="showTooltip = false">
+                    <i class="fa fa-file-text" aria-hidden="true"></i>
+                    <span x-show="showTooltip" class="tooltip">Invoices</span>
+                    </a>
+                  </td>
+
+                </tr>
+              </template>
+            </table>
+          </div>
+
+          <footer>
+            <div class = "left_side">
+              <p >Total:</p>
+              <p x-text = "total"></p>
+            </div>
+          
+            <div class = "right_side">
+              <div class = "page_size">
+                <p>Lines per page</p>
+                <select name="pageSize" id="pageSize" @change="changePageSize">
+                  <template x-for="size in page_size_options" :key="size">
+                    <option 
+                      :value="size" 
+                      x-text="size"
+                      :selected="Number(size) === Number(page_size_option)"
+                    ></option>
+                  </template>
+                </select>
+              </div>
+
+              <div class = "index">
+                <i class="fa fa-angle-left" aria-hidden="true"></i>
+                <p class = "boundary_number" @click = "changePageNumber('min')">1</p>
+                <p class = "filler">...</p>
+                <p class = "middle_number" x-text = "page_number">2</p>
+                <p class = "filler">...</p>
+                <p class = "boundary_number" x-text = "total_pages" @click = "changePageNumber('max')"></p>
+                <i class="fa fa-angle-right" aria-hidden="true"></i>
+              </div>
+
+            </div>
+
+
+          </footer>
       </div>
       </article>
       </section>
