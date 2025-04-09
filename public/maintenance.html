@@ -78,8 +78,10 @@
                    <div class="input">
                     <p>No. of invoices </p>
                     <div class="insert">
-                        <input type="number">
-                        <button type="button"> Insert</button>
+                        <input type="number" max = "1000000" x-model = "number_of_invoices">
+                        <button type="button" @click = "addInvoices()"> Insert</button>
+                        <button type="button" class = "delete" @click = "clearInvoices()"> Clear</button>
+                        <progress :value="progressValue" max="100"></progress>
                     </div>
                    </div>
 

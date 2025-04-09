@@ -1,4 +1,5 @@
 const { Pool } = require("pg");
+const { faker } = require('@faker-js/faker');
 
 // PostgreSQL connection configuration
 const pool = new Pool({
@@ -10,6 +11,7 @@ const pool = new Pool({
 });
 
 const getInvoices = async (req, res, next) => {
+  
   try {
     let {
       customer_id,
@@ -115,7 +117,6 @@ const getInvoices = async (req, res, next) => {
 
     query += ` ORDER BY ${order_by} ${sort.toUpperCase()}`;
 
-    console.log(query)
     // Execute query
     const result = await pool.query(query, params);
     
@@ -124,6 +125,22 @@ const getInvoices = async (req, res, next) => {
     console.error("Error fetching invoices:", err);
     res.status(500).json({ error: "Internal server error" });
   }
+};
+
+const getTotalInvoices = async (req, res, next) => {
+
+    try {
+        let query = `SELECT count(*) as total_invoices
+                        from invoices`;  
+
+        // Execute query
+        const result = await pool.query(query);
+        res.json(result.rows[0]);     
+    
+    } catch (err) {
+        console.error('Error fetching total:', err);
+        res.status(500).json({ error: 'Internal server error' });
+    }
 };
 
 const getInvoice = async (req, res, next) => {
@@ -175,6 +192,18 @@ const addInvoice = async (req, res) => {
     console.error("Error inserting invoice:", err);
     res.status(500).json({ error: "Internal server error" });
   }
+};
+
+const clearInvoices = async (req, res) => {
+    try {
+        await pool.query(`Truncate table invoices  RESTART IDENTITY`);
+        await pool.query(`Truncate table invoice_details  RESTART IDENTITY`);
+        res.json("Invoices database cleared");
+    } catch (err) {
+        console.error('Error deleting invoices:', err);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+
 };
 
 const deleteInvoice = async (req, res) => {
@@ -239,10 +268,103 @@ const updateInvoice = async (req, res) => {
   }
 };
 
+const addTestInvoices = async (req, res) => {
+
+  const statusIds = await getStatusIds();
+  const currencyIds = await getCurrencyIds();
+  const customerIds = await getCustomerIds();
+
+  const { number_of_invoices = 10 } = req.query;
+  res.setHeader('Content-Type', 'text/html');
+  res.setHeader('Transfer-Encoding', 'chunked');
+
+
+  const BATCH_SIZE = 1000;
+  var total_invoices = Number(number_of_invoices);
+  var num_batches = Math.ceil(total_invoices / BATCH_SIZE);
+  let all_invoices = 0;
+  
+  while (num_batches > 0) {
+      
+      let invoice_batch = (total_invoices - BATCH_SIZE) > 0 ? BATCH_SIZE : total_invoices;
+      let invoices = [];
+      for (let i = 0; i < invoice_batch; i++) {
+        invoices.push({
+
+          invoice_date: faker.date.anytime(),
+          due_date: faker.date.anytime(),
+          invoice_lines: [],
+          tax_rate: faker.number.float({ max: 100 }),
+          discount_rate: faker.number.float({ max: 100 }),
+          customer_id: customerIds[Math.floor(Math.random() * customerIds.length)].id,
+          invoice_note: faker.word.words(5),
+          status_id: statusIds[Math.floor(Math.random() * statusIds.length)].id,
+          currency_id: currencyIds[Math.floor(Math.random() * currencyIds.length)].id,
+        });
+      }
+      
+      // Prepare SQL placeholders and values
+      let values = [];
+      let placeholders = invoices.map((invo, index) => {
+        const i = index * 8;
+        values.push(invo.invoice_date, invo.due_date, invo.invoice_note, invo.tax_rate, 
+          invo.discount_rate, invo.customer_id, invo.status_id, invo.currency_id);
+        return `($${i + 1}, $${i + 2}, $${i + 3}, $${i + 4}, $${i + 5}, $${i + 6}, $${i + 7}, $${i + 8})`;
+      }).join(', ');
+    
+      let query = 
+      `INSERT INTO invoices 
+      (invoice_date, due_date, invoice_note, tax_rate, discount_rate, customer_id, status_id, currency_id)
+      VALUES ${placeholders};`;
+    
+      // Execute query
+      try {
+        const result = await pool.query(query, values);
+        console.log(result)
+        console.log(`Inserted ${result.rowCount} invoices.`);
+        all_invoices += invoice_batch
+
+      } 
+      
+      catch (err) {
+        console.error('Error inserting test invoices:', err);
+        return res.status(500).json({ error: 'Internal server error' });
+      }
+    
+      num_batches -= 1;
+      total_invoices -=  BATCH_SIZE;
+      res.write(`${total_invoices} left to send`);
+
+  }
+
+  res.write('Task complete.\n');
+  res.status(201).end();
+
+};
+
+
+async function getStatusIds() {
+  const response = await pool.query('SELECT * FROM status');
+  return response.rows; 
+};
+
+async function getCurrencyIds(){
+  const response = await pool.query('SELECT * FROM currency');
+  return response.rows; 
+};
+
+async function getCustomerIds(){
+  const response = await pool.query('SELECT id FROM customers limit (75000)');
+  return response.rows; 
+}
+
 module.exports = {
   getInvoices,
+  getTotalInvoices,
   getInvoice,
   addInvoice,
+  clearInvoices,
   deleteInvoice,
   updateInvoice,
+  addTestInvoices
 };

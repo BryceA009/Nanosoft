@@ -26,7 +26,6 @@ document.addEventListener("alpine:init", () => {
     },
 
     async init() {
-      await this.getCustomerList(); // Wait for customer list
       await this.fetchStatus(); //fetch status data
       await this.fetchCurrency(); //Fetch Currency data
       await this.fetchSettings(); // Wait for settings to load
@@ -94,35 +93,37 @@ document.addEventListener("alpine:init", () => {
           console.log(key)
           this.errors.push(key);
         }
+
+        if (this.customer.id === ""){
+          console.log("Insert valid customer")
+          this.errors.push("valid customer")
+        }
       }
     },
 
-    async getCustomerList() {
-      const url = "/api/customers";
+    async getCustomer(id) {
+
+      const url = `/api/customers/${id}`;
       const response = await fetch(url, { method: "GET" });
       const data = await response.json();
-      this.customerList = data;
-    },
 
-    getCustomer(id) {
-      this.customerList.forEach((element) => {
-        if (element.id == id) {
-          this.customer.name = element.first_name + " " + element.last_name;
-          this.customer.address = element.address;
-          this.customer.phone = element.phone;
-          this.customer.email = element.email;
-          this.customer.id = id;
-        }
+      if (data == "no_match"){
+        this.customer.name = "";
+        this.customer.address = "";
+        this.customer.phone = "";
+        this.customer.email = "";
+        this.customer.id = "";
+      }
 
-        if (id == ""){
-          this.customer.name = "";
-          this.customer.address = "";
-          this.customer.phone = "";
-          this.customer.email = "";
-          this.customer.id = "";
+      else {
+        this.customer.name = data.first_name + " " + data.last_name;
+        this.customer.address = data.address;
+        this.customer.phone = data.phone;
+        this.customer.email = data.email;
+        this.customer.id = id;
+      }
 
-        }
-      });
+
     },
 
     async updateInvoiceTo() {

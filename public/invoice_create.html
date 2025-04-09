@@ -121,7 +121,11 @@
                   <div class="to">
                     <div class="top_line">
                       <p>To:</p>
-                      <select
+
+                      <input type="number" x-model="invoice.customer_id" @keydown.enter="getCustomer(invoice.customer_id)" placeholder="Enter Customer ID" >
+                      
+
+                      <!-- <select
                         x-model="invoice.customer_id"
                         @change="getCustomer(invoice.customer_id)"
                       >
@@ -136,7 +140,7 @@
                             x-text="list_customer.first_name + ' ' + list_customer.last_name"
                           ></option>
                         </template>
-                      </select>
+                      </select> -->
                     </div>
 
                     <div class="from_details">

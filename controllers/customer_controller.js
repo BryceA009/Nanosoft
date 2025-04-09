@@ -146,6 +146,12 @@ const getCustomer = async (req, res, next) => {
     try {
         const id = parseInt(req.params.id)
         const result = await pool.query(`SELECT * FROM customers where id = ${id}`);
+        console.log(result.rows[0])
+
+        if (result.rows[0] == undefined){
+            return res.json("no_match");   
+        }
+
         res.json(result.rows[0]);
     } catch (err) {
         console.error('Error fetching customer:', err);
