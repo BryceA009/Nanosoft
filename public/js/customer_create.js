@@ -8,6 +8,7 @@ document.addEventListener("alpine:init", () => {
       email: "",
       phone: "",
       address: "",
+      invoice_count:0,
     },
 
 

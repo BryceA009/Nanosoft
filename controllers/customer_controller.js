@@ -17,19 +17,19 @@ const getCustomers = async (req, res, next) => {
 try {
     const { order_by = 'id', page_size = 10, page_number = 1, sort = 'asc' } = req.query;
     let query = `SELECT
-                (SELECT COUNT(*) FROM customers) AS total_customers,
                 c.id,
                 c.first_name, 
                 c.last_name,
                 c.address, 
                 c.phone, 
                 c.email,
-                COALESCE(COUNT(i.id), 0) AS invoice_count
-                FROM customers AS c
-                LEFT JOIN invoices AS i ON c.id = i.customer_id
-                GROUP BY c.id, c.first_name, c.last_name, c.address, c.phone, c.email
-                
-                `;  // Corrected GROUP BY
+                c.invoice_count
+                FROM customers AS c`;
+
+    let query_total =   `SELECT
+                        COUNT(*)
+                        FROM Customers` 
+                        
 
     let params = [];
     let whereClauses = [];
@@ -48,7 +48,12 @@ try {
 
     // Execute query
     const result = await pool.query(query, params);
-    res.json(result.rows);     
+    const number_of_customers = await pool.query(query_total)
+
+    res.json({
+        count: Number(number_of_customers.rows[0].count), // assuming query_total returns COUNT(*)
+        customers: result.rows
+    });
 
 
 } catch (err) {
@@ -96,18 +101,15 @@ const getCustomersLike = async (req, res, next) => {
 
         const query = `
             SELECT 
-                (SELECT COUNT(*) FROM customers c ${whereSQL}) AS total_customers,
                 c.id,
                 c.first_name,
                 c.last_name,
                 c.address,
                 c.phone,
                 c.email,
-                COALESCE(COUNT(i.id), 0) AS invoice_count
+                c.invoice_count
             FROM customers c
-            LEFT JOIN invoices i ON c.id = i.customer_id
             ${whereSQL}
-            GROUP BY c.id, c.first_name, c.last_name, c.address, c.phone, c.email
             ORDER BY ${order_by} ${sort.toUpperCase()}
             OFFSET ${(page_number - 1) * page_size}
             LIMIT ${page_size};
@@ -152,11 +154,11 @@ const getCustomer = async (req, res, next) => {
   };
 
 const addCustomer = async (req, res) => {
-    const { first_name, last_name, address, phone, email } = req.body;
+    const { first_name, last_name, address, phone, email, invoice_count } = req.body;
     try {
         const result = await pool.query(
-            'INSERT INTO customers (first_name, last_name, address, phone, email) VALUES ($1, $2, $3, $4, $5) RETURNING *',
-            [first_name, last_name, address, phone, email]
+            'INSERT INTO customers (first_name, last_name, address, phone, email, invoice_count) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *',
+            [first_name, last_name, address, phone, email, invoice_count]
         );
         res.status(201).json(result.rows[0]); // Return the newly created customer
     } catch (err) {
@@ -221,6 +223,10 @@ const addTestCustomers = async (req, res) => {
 
     const { number_of_customers = 10 } = req.query;
 
+    res.setHeader('Content-Type', 'text/html');
+    res.setHeader('Transfer-Encoding', 'chunked');
+
+
     const BATCH_SIZE = 10000;
     var total_customers = Number(number_of_customers);
     var num_batches = Math.ceil(total_customers / BATCH_SIZE);
@@ -237,19 +243,20 @@ const addTestCustomers = async (req, res) => {
             address: faker.location.streetAddress(),
             phone: faker.phone.number({ style: 'international' }),
             email: faker.internet.email(),
+            invoice_count: 0
           });
         }
       
         // Prepare SQL placeholders and values
         let values = [];
         let placeholders = customers.map((cust, index) => {
-          const i = index * 5;
-          values.push(cust.first_name, cust.last_name, cust.address, cust.phone, cust.email);
-          return `($${i + 1}, $${i + 2}, $${i + 3}, $${i + 4}, $${i + 5})`;
+          const i = index * 6;
+          values.push(cust.first_name, cust.last_name, cust.address, cust.phone, cust.email, cust.invoice_count);
+          return `($${i + 1}, $${i + 2}, $${i + 3}, $${i + 4}, $${i + 5}, $${i + 6})`;
         }).join(', ');
       
         let query = 
-        `INSERT INTO customers (first_name, last_name, address, phone, email)
+        `INSERT INTO customers (first_name, last_name, address, phone, email, invoice_count)
         VALUES ${placeholders};
         `;
       
@@ -268,10 +275,12 @@ const addTestCustomers = async (req, res) => {
       
         num_batches -= 1;
         total_customers -=  BATCH_SIZE;
+        res.write(`${total_customers} left to send`);
 
     }
 
-    res.status(201).json({ inserted: all_customers});
+    res.write('Task complete.\n');
+    res.status(201).end();
 
 };
 

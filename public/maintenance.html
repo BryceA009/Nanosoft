@@ -18,6 +18,7 @@
       referrerpolicy="no-referrer"
     />
     <script defer src="js/alpine.min.js"></script>
+    
     <script src="js/htmx.min.js"></script>
   </head>
 
@@ -32,7 +33,7 @@
         </div>
       </header>
     
-      <form action="https://eu.httpbin.org/post" x-data = "settingsForm" method = "POST">
+      <form action="https://eu.httpbin.org/post" x-data = "MaintenanceForm" method = "POST">
 
       <section>
 
@@ -69,6 +70,7 @@
                         <input type="number" max = "1000000" x-model = "number_of_customers">
                         <button type="button" @click = "addCustomers()"> Insert</button>
                         <button type="button" class = "delete" @click = "clearCustomers()"> Clear</button>
+                        <progress :value="progressValue" max="100"></progress>
                     </div>
                    </div>
 
@@ -92,7 +94,7 @@
 
       </form>
     </main>
-
+    <script src="./components/progress_bar.js"></script>
     <script src="./js/maintenance.js"></script>
     <script src="./js/side_bar.js"></script>
   </body>

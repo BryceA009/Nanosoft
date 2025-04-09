@@ -56,15 +56,35 @@ main {
 
     .search{
       display:flex;
-      flex-direction: column;
       font-size: 12px;
       gap: 5px;
+
+      .left_side{
+        display:flex;
+        flex-direction: column;
+      }
+
+      .right_side{
+
+        text-align: center;
+        padding: 15px 0px;
+
+        .loading_text {
+          text-align: center;
+          justify-content: center;
+          align-content: center;
+        }
+      }
 
       input{
         padding: 3px;
         border: solid #d7d7d9;
       }
+
+
     }
+
+
 
     a {
       padding: 10px;
@@ -102,6 +122,15 @@ main {
         text-align: left;
         padding-left: 0px;
         padding-right: 10px;
+      }
+      
+      td.name_column {
+        width: 150px;
+      }
+
+      td.email_column {
+        
+        width: 300px;
       }
 
       th {
@@ -251,12 +280,14 @@ main {
           background-color: #d7d7d9;
           padding:4px 8px;
           border-radius: 15px;
+          font-size: 12px;
         }
 
         .boundary_number:hover{
           background-color: #a2a2a2;
           padding:4px 8px;
           border-radius: 15px;
+          font-size: 12px;
         }
 
         .middle_number{
@@ -264,10 +295,15 @@ main {
           padding:4px 8px;
           border-radius: 15px;
           color: white;
+          font-size: 12px;
         }
 
         .filler {
           margin-top: 5px;
+        }
+
+        .arrows{
+          margin-bottom: 5px;
         }
       }
     }

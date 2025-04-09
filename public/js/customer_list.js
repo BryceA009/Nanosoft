@@ -9,11 +9,12 @@ document.addEventListener("alpine:init", () => {
     page_size_options: [5, 10, 15, 20],
     total: 0,
     total_pages: 0,
+    isLoading: false,
 
     async init() {
       await this.fetchCustomers();
-      this.total = await this.customerList[2].total_customers;
       this.totalPages();
+
     },
 
     async fetchCustomers() {
@@ -50,7 +51,9 @@ document.addEventListener("alpine:init", () => {
         const url = `/api/customers?&page_size=${this.page_size_option}&page_number=${this.page_number}`;
         const response = await fetch(url, { method: "GET" });
         const data = await response.json();
-        this.customerList = data;
+        console.log(data)
+        this.customerList = data.customers;
+        this.total = data.count;
       }
     },
 
@@ -65,22 +68,29 @@ document.addEventListener("alpine:init", () => {
     },
 
     async sortCustomer(category) {
-      // Check if sorting by the same category
-      if (this.sort_category === category) {
-        var url = `api/customers/like?order_by=${category}&sort=${this.sort_direction}&name_search=${this.name_search}&page_size=${this.page_size_option}`;
-        this.sort_direction = this.sort_direction === "desc" ? "asc" : "desc";
-      }
 
-      if (this.sort_category != category) {
-        var url = `api/customers/like?order_by=${category}&sort=asc&name_search=${this.name_search}&page_size=${this.page_size_option}`;
+
+      this.isLoading = true;
+
+      if (this.sort_category === category) {
+        url = `api/customers/like?order_by=${category}&sort=${this.sort_direction}&name_search=${this.name_search}&page_size=${this.page_size_option}`;
+        this.sort_direction = this.sort_direction === "desc" ? "asc" : "desc";
+      } else {
+        url = `api/customers/like?order_by=${category}&sort=asc&name_search=${this.name_search}&page_size=${this.page_size_option}`;
         this.sort_direction = "desc";
       }
-
-      const response = await fetch(url, { method: "GET" });
-      const data = await response.json();
-      this.customerList = data;
-      this.sort_category = category;
-      this.page_number = 1;
+    
+      try {
+        const response = await fetch(url, { method: "GET" });
+        const data = await response.json();
+        this.customerList = data;
+        this.sort_category = category;
+        this.page_number = 1;
+      } catch (err) {
+        console.error("Error fetching sorted customers:", err);
+      } finally {
+        this.isLoading = false;
+      }
     },
 
     async searchFilter() {
@@ -124,16 +134,32 @@ document.addEventListener("alpine:init", () => {
 
     async changePageNumber(direction) {
       const actions = {
-        forward: () => console.log("forward"),
-        back: () => console.log("back"),
+        forward: () => { 
+          if (this.page_number != this.total_pages){
+          this.page_number += 1;
+          this.fetchCustomers();
+          }
+        },
+
+        back: () => {
+
+          if (this.page_number != 1){
+            this.page_number -= 1;
+            this.fetchCustomers();
+          }
+
+        },
+
         max: () => {
           this.page_number = this.total_pages;
           this.fetchCustomers();
         },
+
         min: () => {
           this.page_number = 1;
           this.fetchCustomers();
         },
+
       };
 
       if (actions[direction]) {
