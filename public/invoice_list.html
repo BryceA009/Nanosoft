@@ -195,6 +195,21 @@
                       </button>
                     </th>
 
+                    <th>                      
+                      <button type="button" @click="sortInvoice('invoice_total')">
+
+                      <div class = "left_side">
+                        <p>Total</p>
+                      </div>
+      
+                      <div class = "right_side" x-show = "sort_category === 'invoice_total'">
+                        <i class="fa fa-caret-up" aria-hidden="true" x-show = "sort_direction === 'asc'"></i>
+                        <i class="fa fa-caret-down" aria-hidden="true" x-show = "sort_direction === 'desc'"></i>     
+                      </div>
+
+                    </button>
+                  </th>
+
                     <th>Action</th>
                   </thead>
 
@@ -216,7 +231,6 @@
                             x-text="invoice.last_name"></span>
                         </td>
 
-
                         <td>
                           <span x-text="invoice.invoice_date"></span>
                         </td>
@@ -231,6 +245,10 @@
                             style="text-transform: capitalize"
                             :class="statusFormat(invoice.status_id)"
                           ></span>
+                        </td>
+
+                        <td>
+                          <span x-text="Number(invoice.invoice_total).toFixed(2)"></span>
                         </td>
 
                         <td class="actions">
@@ -276,6 +294,42 @@
                   </template>
                 </table>
               </div>
+
+              <footer>
+                <div class = "left_side">
+                  <p >Total:</p>
+                  <p x-text = "total"></p>
+                </div>
+              
+                <div class = "right_side">
+                  <div class = "page_size">
+                    <p>Lines per page</p>
+                    <select name="pageSize" id="pageSize" @change="changePageSize">
+                      <template x-for="size in page_size_options" :key="size">
+                        <option 
+                          :value="size" 
+                          x-text="size"
+                          :selected="Number(size) === Number(page_size_option)"
+                        ></option>
+                      </template>
+                    </select>
+                  </div>
+    
+                  <div class = "index">
+                    <i class="fa fa-angle-left arrows" aria-hidden="true" @click = "changePageNumber('back')"></i>
+                    <p class = "boundary_number" @click = "changePageNumber('min')">1</p>
+                    <p class = "filler">...</p>
+                    <p class= "middle_number" x-text="`${page_number} / ${total_pages}`"></p>
+                    <p class = "filler">...</p>
+                    <p class = "boundary_number" x-text = "total_pages" @click = "changePageNumber('max')"></p>
+                    <i class="fa fa-angle-right arrows" aria-hidden="true" @click = "changePageNumber('forward')"></i>
+                  </div>
+    
+                </div>
+    
+    
+              </footer>
+              
             </div>
           </article>
         </section>

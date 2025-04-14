@@ -11,26 +11,42 @@ document.addEventListener("alpine:init", () => {
     customer_id: "",
     name_search: "",
     multiple_customer_sql: "",
+    page_number: 1,
+    page_size_option: 10,
+    page_size_options: [5, 10, 15, 20],
+    total: 0,
+    total_pages: 0,
+    isLoading: false,
 
     async init() {
       this.customer_id = await this.fetchCustomerID();
       await this.fetchInvoices(this.status_filter);
       await this.fetchStatus();
-      await this.getStatusAmounts();
       this.customers = await this.getCustomers();
+      await this.totalPages();
     },
 
     async fetchInvoices(status_filter) {
 
+      let corrected_direction = this.sorted_direction === "asc" ? "desc" : "asc";
+
+      let sort_link = (this.sort_category && this.sort_direction) 
+                      ? `order_by=${this.sort_category}&sort=${corrected_direction}` 
+                      : "";
+
+
+      let search_link = this.name_search ? 
+      `&search_data=${this.name_search}` : ""
+      
 
       if (this.customer_id) {
         if (status_filter == "all") {
-          const url = `api/invoices?customer_id=${this.customer_id}`;
+          const url = `api/invoices?page_number=${this.page_number}&customer_id=${this.customer_id}` + sort_link;
           const response = await fetch(url, { method: "GET" });
           const data = await response.json();
           this.invoiceList = data;
         } else {
-          const url = `api/invoices?status_id=${status_filter}&customer_id=${this.customer_id}`;
+          const url = `api/invoices?page_number=${this.page_number}&status_id=${status_filter}&customer_id=${this.customer_id}` + sort_link;
           const response = await fetch(url, { method: "GET" });
           const data = await response.json();
           this.invoiceList = data;
@@ -38,17 +54,21 @@ document.addEventListener("alpine:init", () => {
       }
   
       if (this.customer_id == null && this.multiple_customer_sql == ""){
-       
+
         if (status_filter == "all") {
-          const url = "api/invoices";
+          const url = `api/invoices?${search_link}&page_size=${this.page_size_option}&page_number=${this.page_number}` + sort_link ;
           const response = await fetch(url, { method: "GET" });
           const data = await response.json();
-          this.invoiceList = data;
-        } else {
-          const url = `api/invoices?status_id=${status_filter}`;
+          this.invoiceList = data.invoices;
+          this.getStatusAmounts(data.invoice_count);
+        } 
+        
+        else {
+          const url = `api/invoices?${search_link}&status_id=${status_filter}&page_size=${this.page_size_option}&page_number=${this.page_number}` + sort_link ;
           const response = await fetch(url, { method: "GET" });
           const data = await response.json();
-          this.invoiceList = data;
+          this.invoiceList = data.invoices;
+          this.getStatusAmounts(data.invoice_count)
         }
       }
 
@@ -72,32 +92,36 @@ document.addEventListener("alpine:init", () => {
 
       // Check if sorting by the same category
       if (this.status_filter !== "all" && this.sort_category === category) {
-        var url = `api/invoices?order_by=${category}&sort=${this.sort_direction}&status_id=${this.status_filter}${customer_link}&search_data=${this.name_search}`;
+        this.page_number = 1
+        var url = `api/invoices?order_by=${category}&sort=${this.sort_direction}&status_id=${this.status_filter}${customer_link}&search_data=${this.name_search}&page_size=${this.page_size_option}&page_number=${this.page_number}`;
 
         this.sort_direction = this.sort_direction === "desc" ? "asc" : "desc";
+        
       }
 
       if (this.status_filter !== "all" && this.sort_category != category) {
-        var url = `api/invoices?order_by=${category}&sort=asc&status_id=${this.status_filter}${customer_link}&search_data=${this.name_search}`;
+        this.page_number = 1
+        var url = `api/invoices?order_by=${category}&sort=asc&status_id=${this.status_filter}${customer_link}&search_data=${this.name_search}&page_size=${this.page_size_option}&page_number=${this.page_number}`;
 
         this.sort_direction = "desc";
       }
 
       if (this.status_filter == "all" && this.sort_category == category) {
-        var url = `api/invoices?order_by=${category}&sort=${this.sort_direction}${customer_link}&search_data=${this.name_search}`;
+        this.page_number = 1
+        var url = `api/invoices?order_by=${category}&sort=${this.sort_direction}${customer_link}&search_data=${this.name_search}&page_size=${this.page_size_option}&page_number=${this.page_number}`;
 
         this.sort_direction = this.sort_direction === "desc" ? "asc" : "desc";
       }
 
       if (this.status_filter == "all" && this.sort_category != category) {
-        var url = `api/invoices?order_by=${category}&sort=asc${customer_link}&search_data=${this.name_search}`;
-
+        this.page_number = 1
+        var url = `api/invoices?order_by=${category}&sort=asc${customer_link}&search_data=${this.name_search}&page_size=${this.page_size_option}&page_number=${this.page_number}`;
         this.sort_direction = "desc";
       }
 
       const response = await fetch(url, { method: "GET" });
       const data = await response.json();
-      this.invoiceList = data;
+      this.invoiceList = data.invoices;
       this.sort_category = category;
 
       this.invoiceList.forEach((element) => {
@@ -137,43 +161,43 @@ document.addEventListener("alpine:init", () => {
 
     async statusFilterFormat(status) {
       if (status === 7) {
+        this.page_number = 1
         this.status_filter = 7;
+        
       }
 
       if (status === 8) {
+        this.page_number = 1
         this.status_filter = 8;
       }
 
       if (status === 9) {
+        this.page_number = 1
         this.status_filter = 9;
       }
 
       if (status === "all") {
+        this.page_number = 1
         this.status_filter = "all";
       }
 
       await this.fetchInvoices(this.status_filter);
+      await this.totalPages()
     },
 
     statusCount(status) {
       return this.status_amounts[status];
     },
 
-    async getStatusAmounts() {
+    async getStatusAmounts(invoiceCountData) {
       var total = 0;
-      this.statusOptions.forEach((status) => {
-        var count = 0;
-        var statusId = status.id;
-        this.invoiceList.forEach((invoice) => {
-          if (invoice.status_id === status.id) {
-            count += 1;
-          }
-          this.status_amounts[statusId] = count;
-        });
-        total = total + count;
+      invoiceCountData.forEach((status) => {
+        this.status_amounts[status.status_id] = status.total;
+        total = total + Number(status.total);
       });
 
       this.status_amounts["all"] = total;
+      this.total = total
     },
 
     async getCustomers() {
@@ -222,12 +246,14 @@ document.addEventListener("alpine:init", () => {
 
     async searchFilter(){
  
-
+      this.page_number = 1
       if (this.status_filter == "all") {
         const url = `api/invoices?search_data=${this.name_search}`;
         const response = await fetch(url, { method: "GET" });
         const data = await response.json();
-        this.invoiceList = data;
+        this.invoiceList = data.invoices;
+        await this.getStatusAmounts(data.invoice_count)
+        await this.totalPages();
 
       }
       
@@ -235,7 +261,9 @@ document.addEventListener("alpine:init", () => {
         const url = `api/invoices?status_id=${this.status_filter}&search_data=${this.name_search}`;
         const response = await fetch(url, { method: "GET" });
         const data = await response.json();
-        this.invoiceList = data;
+        this.invoiceList = data.invoices;
+        await this.getStatusAmounts(data.invoice_count)
+        await this.totalPages();
       }
 
       this.invoiceList.forEach((element) => {
@@ -248,7 +276,66 @@ document.addEventListener("alpine:init", () => {
         element.due_date = formattedDueDate;
       });
 
-    }
+    },
+
+    async changePageSize() {
+      const selectEl = document.getElementById("pageSize");
+      const selectedValue = selectEl.value;
+      this.page_size_option = selectedValue;
+      await this.fetchInvoices(this.status_filter);
+      await this.totalPages();
+    },
+
+    async totalPages() {;
+
+      let invoiceTotal = (this.status_amounts[this.status_filter])
+      let quotient = Math.floor(invoiceTotal / this.page_size_option);
+      let remainder = invoiceTotal % this.page_size_option;
+      this.total_pages = quotient;
+      if (remainder != 0) {
+        this.total_pages += 1;
+      }
+      if (quotient == 0) {
+        this.total_pages = 1;
+      }
+    },
+
+    async changePageNumber(direction) {
+      const actions = {
+        forward: () => { 
+          if (this.page_number != this.total_pages){
+          this.page_number += 1;
+          this.fetchInvoices(this.status_filter);
+          }
+        },
+
+        back: () => {
+
+          if (this.page_number != 1){
+            this.page_number -= 1;
+            this.fetchInvoices(this.status_filter);
+          }
+
+        },
+
+        max: () => {
+          this.page_number = this.total_pages;
+          this.fetchInvoices(this.status_filter);
+        },
+
+        min: () => {
+          this.page_number = 1;
+          this.fetchInvoices(this.status_filter);
+        },
+
+      };
+
+      if (actions[direction]) {
+        actions[direction]();
+      } else {
+        console.warn("Invalid direction:", direction);
+      }
+    },
 
     
   }));

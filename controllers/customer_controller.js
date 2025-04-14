@@ -115,8 +115,19 @@ const getCustomersLike = async (req, res, next) => {
             LIMIT ${page_size};
         `;
 
+        let query_total = `SELECT
+        COUNT(*)
+        FROM Customers c
+        ${whereSQL}` 
+
+        console.log(query_total)
+        const number_of_customers = await pool.query(query_total, params)
+
         const result = await pool.query(query, params);
-        res.json(result.rows);
+        res.json({
+            count: Number(number_of_customers.rows[0].count),
+            customers: result.rows
+        });
 
     } 
     

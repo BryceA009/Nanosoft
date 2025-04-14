@@ -1,11 +1,9 @@
 const express = require('express');
-const {getInvoices, getInvoice, getTotalInvoices, addInvoice, clearInvoices, deleteInvoice, updateInvoice, addTestInvoices} = require('../controllers/invoice_controller');
+const {getInvoices, getInvoice, addInvoice, clearInvoices, deleteInvoice, updateInvoice, addTestInvoices} = require('../controllers/invoice_controller');
 const router = express.Router();
 
 // Routes
 router.get('/', getInvoices);
-
-router.get('/count', getTotalInvoices);
 
 router.get('/:id', getInvoice);
 

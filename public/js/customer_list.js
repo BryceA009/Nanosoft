@@ -31,7 +31,22 @@ document.addEventListener("alpine:init", () => {
 
         const response = await fetch(url, { method: "GET" });
         const data = await response.json();
-        this.customerList = await data;
+        this.customerList = await data.customers;
+        this.total = await data.count;
+        
+      }
+
+      if (this.name_search && !this.sort_category) {
+        const url = `/api/customers/like?` +
+                    `name_search=${this.name_search}&` +
+                    `page_size=${this.page_size_option}&` +
+                    `page_number=${this.page_number}`;
+
+        const response = await fetch(url, { method: "GET" });
+        const data = await response.json();
+        this.customerList = await data.customers;
+        this.total = await data.count;
+        
       }
 
       if (!this.name_search && this.sort_category) {
@@ -44,14 +59,14 @@ document.addEventListener("alpine:init", () => {
 
         const response = await fetch(url, { method: "GET" });
         const data = await response.json();
-        this.customerList = await data;
+        this.customerList = await data.customers;
+        this.total = await data.count;
       } 
       
       if (!this.name_search && !this.sort_category){
         const url = `/api/customers?&page_size=${this.page_size_option}&page_number=${this.page_number}`;
         const response = await fetch(url, { method: "GET" });
         const data = await response.json();
-        console.log(data)
         this.customerList = data.customers;
         this.total = data.count;
       }
@@ -97,14 +112,8 @@ document.addEventListener("alpine:init", () => {
       const url = `/api/customers/like?name_search=${this.name_search}&page_size=${this.page_size_option}`;
       const response = await fetch(url, { method: "GET" });
       const data = await response.json();
-      this.customerList = await data;
-
-      if (this.customerList.length > 0) {
-        this.total = await this.customerList[0].total_customers;
-      } else {
-        this.total = 0;
-      }
-
+      this.customerList = await data.customers;
+      this.total = await data.count;
       await this.totalPages();
       this.page_number = 1;
     },

@@ -31,7 +31,6 @@ document.addEventListener("alpine:init", () => {
         const id = await this.fetchID(); // Ensure ID is fetched before using it
         await this.fetchStatus();
         await this.fetchCurrency();
-        await this.getCustomerList(); // Wait for customer list
         await this.fetchInvoice(id); // Wait for invoice data
         await this.getCustomer(this.invoice.customer_id);
         await this.fetchSettings(); // Wait for settings to load
@@ -173,24 +172,29 @@ document.addEventListener("alpine:init", () => {
       }
     },
 
-    async getCustomerList() {
-      const url = "/api/customers";
+    async getCustomer(id) {
+
+      const url = `/api/customers/${id}`;
       const response = await fetch(url, { method: "GET" });
       const data = await response.json();
-      this.customerList = data;
-    },
 
-    getCustomer(id) {
-      this.customerList.forEach((element) => {
-        if (element.id == id) {
-          this.customer.name = element.first_name + " " + element.last_name;
-          this.customer.address = element.address;
-          this.customer.phone = element.phone;
-          this.customer.email = element.email;
-          this.customer.id = id;
+      if (data == "no_match"){
+        this.customer.name = "";
+        this.customer.address = "";
+        this.customer.phone = "";
+        this.customer.email = "";
+        this.customer.id = "";
+      }
 
-        }
-      });
+      else {
+        this.customer.name = data.first_name + " " + data.last_name;
+        this.customer.address = data.address;
+        this.customer.phone = data.phone;
+        this.customer.email = data.email;
+        this.customer.id = id;
+      }
+
+
     },
 
     async updateInvoiceTo() {

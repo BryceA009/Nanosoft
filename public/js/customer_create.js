@@ -8,7 +8,7 @@ document.addEventListener("alpine:init", () => {
       email: "",
       phone: "",
       address: "",
-      invoice_count:0,
+      invoice_count: 0,
     },
 
 
@@ -43,7 +43,7 @@ document.addEventListener("alpine:init", () => {
     validateForm() {
         this.errors = []
         for (let key in this.customer) {
-          if (this.customer[key] == "") {
+          if (this.customer[key] === "") {
             this.errors.push(key);
           }
         }

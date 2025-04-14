@@ -126,21 +126,12 @@
                   <div class="to">
                     <div class="top_line">
                       <p>To:</p>
-                      <select
-                        x-model="invoice.customer_id"
-                        @change="getCustomer(invoice.customer_id)">
+                      <div class="top_line">
+                        <p>To:</p>
+  
+                        <input type="number" x-model="invoice.customer_id" @keydown.enter="getCustomer(invoice.customer_id)" placeholder="Enter Customer ID" >
                         
-                        <option value="">Select name</option>
-
-                        <template
-                          x-for="list_customer in customerList"
-                          :key="list_customer.id">
-                          <option
-                            :value="list_customer.id"
-                            x-text="list_customer.first_name + ' ' + list_customer.last_name"
-                          ></option>
-                        </template>
-                      </select>
+                      </div>
                     </div>
 
                     <div class="from_details">
