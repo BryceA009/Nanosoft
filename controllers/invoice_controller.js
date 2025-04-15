@@ -185,6 +185,7 @@ const addInvoice = async (req, res) => {
         cust_last_name
       ]
     );
+
     const newInvoiceId = result.rows[0].id;
     invoice_lines.forEach(async (line) => {
       await pool.query(
@@ -489,6 +490,22 @@ const addTestInvoices = async (req, res) => {
   res.status(201).end();
 };
 
+const totalInvoices = async (req, res) => {
+  try {
+    let query = `SELECT count(*) as total_invoices
+                    from invoices`;  
+
+    // Execute query
+    const result = await pool.query(query);
+    res.json(result.rows[0]);     
+
+} catch (err) {
+    console.error('Error fetching total:', err);
+    res.status(500).json({ error: 'Internal server error' });
+}
+
+}
+
 async function getStatusIds() {
   const response = await pool.query("SELECT * FROM status");
   return response.rows;
@@ -509,6 +526,7 @@ async function getCustomerIds() {
 module.exports = {
   getInvoices,
   getInvoice,
+  totalInvoices,
   addInvoice,
   clearInvoices,
   deleteInvoice,

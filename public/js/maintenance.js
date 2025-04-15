@@ -30,7 +30,7 @@ document.addEventListener("alpine:init", () => {
         }
     
         alert(
-          `${this.number_of_customers.toLocaleString(
+          `${Number(this.number_of_customers).toLocaleString(
             "fr-FR")} customers have been added`);
 
         this.number_of_customers = 0;
@@ -84,6 +84,17 @@ document.addEventListener("alpine:init", () => {
       this.total_customers = Number(data.total_customers);
     },
 
+    async totalInvoices() {
+      const url = `/api/invoices/count`;
+
+      const response = await fetch(url, {
+        method: "GET",
+      });
+
+      const data = await response.json();
+      this.total_invoices = Number(data.total_invoices);
+    },
+
     async addInvoices() {
       this.progress = "Starting...";
       this.progressValue = 0;
@@ -100,7 +111,7 @@ document.addEventListener("alpine:init", () => {
         }
     
         alert(
-          `${this.number_of_invoices.toLocaleString(
+          `${Number(this.number_of_invoices).toLocaleString(
             "fr-FR")} invoices have been added`);
 
         this.number_of_invoices = 0;
@@ -141,17 +152,6 @@ document.addEventListener("alpine:init", () => {
           console.error("Error deleting invoices:", err);
         }
       }
-    },
-
-    async totalInvoices() {
-      const url = `/api/invoices/count`;
-
-      const response = await fetch(url, {
-        method: "GET",
-      });
-
-      const data = await response.json();
-      this.total_invoices = Number(data.total_invoices);
     },
   }));
 });

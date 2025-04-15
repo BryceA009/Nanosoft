@@ -98,7 +98,7 @@ document.addEventListener("alpine:init", () => {
       try {
         const response = await fetch(url, { method: "GET" });
         const data = await response.json();
-        this.customerList = data;
+        this.customerList = data.customers;
         this.sort_category = category;
         this.page_number = 1;
       } catch (err) {

@@ -1,7 +1,7 @@
 
 async function handleProgressStream(reader, context, category) {
         
-        const insert_value = context.number_of_customers ? category === "customers" : context.number_of_invoices;
+        const insert_value = Number(context.number_of_customers) ? category === "customers" : Number(context.number_of_invoices);
         const decoder = new TextDecoder();
         
         while (true) {

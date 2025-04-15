@@ -120,7 +120,6 @@ const getCustomersLike = async (req, res, next) => {
         FROM Customers c
         ${whereSQL}` 
 
-        console.log(query_total)
         const number_of_customers = await pool.query(query_total, params)
 
         const result = await pool.query(query, params);
@@ -202,7 +201,7 @@ const deleteCustomer = async (req, res) => {
         res.json(result.rows);
     } catch (err) {
         console.error('Error deleting customer:', err);
-        res.status(500).json({ error: 'Internal server error' });
+        res.status(500).json({ error: err.message });
     }
 
 }
