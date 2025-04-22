@@ -72,8 +72,7 @@ CREATE INDEX IF NOT EXISTS idx_phone
 
 -- Invoices Simplified
 
--- CREATE INDEX if NOT EXISTS first_name_index
--- on invoices(first_name)
+-- CREATE INDEX if NOT EXISTS first_name_index on invoices(first_name)
 
 -- CREATE INDEX if NOT EXISTS last_name_index
 -- on invoices(last_name)

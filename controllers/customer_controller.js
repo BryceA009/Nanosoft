@@ -46,9 +46,13 @@ try {
     query += ` offset ${(page_number-1) * page_size}`;
     query += ` limit ${page_size}`;
 
-    // Execute query
-    const result = await pool.query(query, params);
-    const number_of_customers = await pool.query(query_total)
+
+    const result = await pool.query(
+        'SELECT * FROM get_customers($1, $2, $3, $4)',
+        [order_by, sort, page_number, page_size]);
+      
+    const number_of_customers = await pool.query('SELECT get_customers_total()');
+
 
     res.json({
         count: Number(number_of_customers.rows[0].count), // assuming query_total returns COUNT(*)
@@ -156,7 +160,7 @@ const getCustomer = async (req, res, next) => {
     try {
         const id = parseInt(req.params.id)
         const result = await pool.query(`SELECT * FROM customers where id = ${id}`);
-        console.log(result.rows[0])
+      
 
         if (result.rows[0] == undefined){
             return res.json("no_match");   

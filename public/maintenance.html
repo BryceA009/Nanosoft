@@ -70,7 +70,6 @@
                         <input type="number" max = "1000000" x-model = "number_of_customers">
                         <button type="button" @click = "addCustomers()"> Insert</button>
                         <button type="button" class = "delete" @click = "clearCustomers()"> Clear</button>
-                        <progress :value="progressValue" max="100"></progress>
                     </div>
                    </div>
 
@@ -81,10 +80,10 @@
                         <input type="number" max = "1000000" x-model = "number_of_invoices">
                         <button type="button" @click = "addInvoices()"> Insert</button>
                         <button type="button" class = "delete" @click = "clearInvoices()"> Clear</button>
-                        <progress :value="progressValue" max="100"></progress>
+                        
                     </div>
                    </div>
-
+                   <progress :value="progressValue" max="100"></progress>
                 </div>
 
 

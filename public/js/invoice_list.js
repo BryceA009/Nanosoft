@@ -44,12 +44,14 @@ document.addEventListener("alpine:init", () => {
           const url = `api/invoices?page_number=${this.page_number}&customer_id=${this.customer_id}` + sort_link;
           const response = await fetch(url, { method: "GET" });
           const data = await response.json();
-          this.invoiceList = data;
+          this.invoiceList = data.invoices;
+          this.getStatusAmounts(data.invoice_count)
         } else {
           const url = `api/invoices?page_number=${this.page_number}&status_id=${status_filter}&customer_id=${this.customer_id}` + sort_link;
           const response = await fetch(url, { method: "GET" });
           const data = await response.json();
-          this.invoiceList = data;
+          this.invoiceList = data.invoices;
+          this.getStatusAmounts(data.invoice_count)
         }
       }
   
@@ -241,6 +243,7 @@ document.addEventListener("alpine:init", () => {
       }
 
       const customerId = getQueryParameter("customer_id");
+      console.log(customerId)
       return customerId;
     },
 

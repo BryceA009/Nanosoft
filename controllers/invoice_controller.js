@@ -41,9 +41,9 @@ const getInvoices = async (req, res, next) => {
     let second_part = "";
 
     if (search_data) {
-      let parts = search_data.split(" ");
-      first_part = (parts[0] || "").toUpperCase().trim();
-      second_part = (parts.slice(1).join(" ") || "").toUpperCase().trim();
+      let parts = search_data.trim().split(/\s+/); // trims + handles multiple spaces
+      first_part = (parts[0] || "").toUpperCase();
+      second_part = (parts[1] ? parts.slice(1).join(" ").toUpperCase() : "");
     }
 
     // Validate allowed columns for ordering to prevent SQL injection
@@ -72,17 +72,8 @@ const getInvoices = async (req, res, next) => {
     }
 
     if (customer_id) {
-      if (!Array.isArray(customer_id)) {
-        customer_id = [customer_id];
-      }
+      whereClauses.push(`customer_id = ${customer_id}`);
 
-      let startIndex = params.length + 1;
-      let placeholders = customer_id
-        .map((_, index) => `$${startIndex + index}`)
-        .join(", ");
-
-      whereClauses.push(`customer_id IN (${placeholders})`);
-      params.push(...customer_id);
     }
 
     if (first_part) {
@@ -105,6 +96,7 @@ const getInvoices = async (req, res, next) => {
     if (first_part && second_part === "") {
       searchClauses.push(`CAST(invoice_date AS TEXT) LIKE '%${first_part}%'`);
       searchClauses.push(`CAST(due_date AS TEXT) LIKE '%${first_part}%'`);
+      searchClauses.push(`last_name iLIKE '%${first_part}%'`);
 
       query += ` WHERE (` + searchClauses.join(" OR ") + `)`;
       query_total += ` WHERE (` + searchClauses.join(" OR ") + `)`;
@@ -123,6 +115,7 @@ const getInvoices = async (req, res, next) => {
     query += ` limit ${page_size}`;
     query_total += ` group by status_id`
 
+    
     // Execute query
 
     const result = await pool.query(query);
@@ -220,15 +213,8 @@ const addInvoice = async (req, res) => {
 
 const clearInvoices = async (req, res) => {
   try {
-    await pool.query(`Truncate table invoices  RESTART IDENTITY`);
-    await pool.query(`Truncate table invoice_details  RESTART IDENTITY`);
-
-    await pool.query(
-      `UPDATE customers
-          SET invoice_count = 0`
-    );
-
-    res.json("Invoices database cleared");
+      await pool.query(`select clearInvoices()`)
+      res.json("Invoices database cleared");
   } catch (err) {
     console.error("Error deleting invoices:", err);
     res.status(500).json({ error: "Internal server error" });
@@ -238,18 +224,9 @@ const clearInvoices = async (req, res) => {
 const deleteInvoice = async (req, res) => {
   try {
     const id = parseInt(req.params.id);
-    const customerID = await pool.query(
-      `Select customer_id FROM invoices WHERE id = ${id};`
-    );
-    const result = await pool.query(`DELETE FROM invoices WHERE id = ${id};`);
+    await pool.query(`select deleteInvoice(${id})`)
+    res.json(); 
 
-    await pool.query(
-      `UPDATE customers
-      SET invoice_count = invoice_count - 1
-      WHERE id = ${customerID.rows[0].customer_id}`
-    );
-
-    res.json(result.rows);
   } catch (err) {
     console.error("Error deleting invoice:", err);
     res.status(500).json({ error: "Internal server error" });
@@ -270,56 +247,26 @@ const updateInvoice = async (req, res) => {
   const id = parseInt(req.params.id); // Extract ID from request params
 
   try {
-    const originalCustomerID = await pool.query(
-      `SELECT customer_id FROM invoices WHERE id = ${id}`
-    );
 
-    if (customer_id != originalCustomerID) {
-      await pool.query(
-        `UPDATE customers
-      SET invoice_count = invoice_count - 1
-      WHERE id = ${originalCustomerID.rows[0].customer_id}`
-      );
-
-      await pool.query(
-        `UPDATE customers
-      SET invoice_count = invoice_count + 1
-      WHERE id = ${customer_id}`
-      );
-    }
-
-    const result = await pool.query(
-      `UPDATE invoices 
-             SET 
-                 invoice_date = COALESCE($1, invoice_date), 
-                 customer_id = COALESCE($2, customer_id), 
-                 due_date = COALESCE($3, due_date), 
-                 invoice_note = COALESCE($4, invoice_note), 
-                 status_id = COALESCE($5, status_id),
-                 currency_id= COALESCE($6, currency_id) ,
-                 discount_rate= COALESCE($7, discount_rate),
-                 tax_rate= COALESCE($8, tax_rate) 
-             WHERE id = $9
-             RETURNING *`,
+    await pool.query(
+      `SELECT updateInvoice($1, $2, $3, $4, $5, $6, $7, $8, $9)`,
       [
-        invoice_date || null,
-        customer_id || null,
-        due_date || null,
-        invoice_note || null,
-        status_id || null,
-        currency_id || null,
-        discount_rate || null,
-        tax_rate || null,
         id,
+        invoice_date,
+        customer_id,
+        due_date,
+        invoice_note,
+        status_id,
+        currency_id,
+        discount_rate,
+        tax_rate
       ]
     );
 
-    if (result.rows.length === 0) {
-      return res.status(404).json({ error: "Invoice not found" });
-    }
-
-    res.status(200).json(result.rows[0]); // Return updated invoice data
-  } catch (err) {
+    res.status(200).json(); 
+  } 
+  
+  catch (err) {
     console.error("Error updating invoice:", err);
     res.status(500).json({ error: "Internal server error" });
   }
