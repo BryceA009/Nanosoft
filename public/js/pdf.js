@@ -12,10 +12,10 @@ function generatePDF (context){
       const statusColorMap = {
         paid: "#68db51",
         unpaid: "orange",
-        cancelled: "#f4b255",
+        cancelled: "#fa1414",
       };
 
-      const borderColor = statusColorMap[context.invoice.invoiceStatus];
+      const borderColor = statusColorMap[context.invoiceStatus];
 
 
       var dd = {
@@ -36,10 +36,12 @@ function generatePDF (context){
                           body: [
                             [
                               {
-                                text: context.invoice.status_id,
+                                text: context.invoiceStatus,
                                 style: "status",
                                 padding: [4, 8], // Add padding inside the border
-                                color: borderColor
+                                color: borderColor,
+                                border: [false, false,false,false]
+                                
                               },
                             ],
                           ],
@@ -338,7 +340,7 @@ function generatePDF (context){
             margin: [0, 30, 0, 0],
           },
         ],
-
+        
         styles: {
           title: {
             fontSize: 25,
@@ -346,7 +348,7 @@ function generatePDF (context){
             marginBottom: 5,
           },
           status: {
-            fontSize: 9,
+            fontSize: 11,
             italics: true,
             color: "green",
           },

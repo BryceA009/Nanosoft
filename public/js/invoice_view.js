@@ -23,15 +23,18 @@ document.addEventListener("alpine:init", () => {
 
     customerList: [],
     customer: {},
-    statusOptions: [],
+    statusOptions: {},
     currencyOptions: [],
+    invoiceStatus: "",
 
     async init() {
       const id = await this.fetchID();
       await this.fetchInvoice(id);
       await this.fetchInvoiceDetails();
       await this.fetchSettings();
-      await this.fetchCurrency(); 
+      await this.fetchCurrency();
+      await this.fetchStatus();
+
       await this.getCustomer(this.invoice.customer_id);
       
     },
@@ -107,7 +110,6 @@ document.addEventListener("alpine:init", () => {
       const data = await response.json();
 
       this.company = data;
-      console.log(this.company);
     },
 
     async getCustomer(id) {
@@ -138,6 +140,19 @@ document.addEventListener("alpine:init", () => {
       const data = await response.json();
 
       this.currencyOptions = data;
+    },
+
+    async fetchStatus() {
+      const url = "/api/status";
+      const response = await fetch(url, { method: "GET" });
+      const data = await response.json();
+
+      data.forEach(obj => {
+          this.statusOptions[obj.id] = obj.name;
+      });
+
+      this.invoiceStatus = await this.statusOptions[this.invoice.status_id] 
+ 
     },
 
     statusFormat(status) {
