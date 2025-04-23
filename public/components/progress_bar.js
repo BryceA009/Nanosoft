@@ -1,7 +1,9 @@
 
 async function handleProgressStream(reader, context, category) {
         
-        const insert_value = Number(context.number_of_customers) ? category === "customers" : Number(context.number_of_invoices);
+        const insert_value = category === "customers"
+        ? Number(context.number_of_customers)
+        : Number(context.number_of_invoices);
         const decoder = new TextDecoder();
         
         while (true) {
@@ -16,13 +18,14 @@ async function handleProgressStream(reader, context, category) {
           const AmountLeftToInsert = parseInt(chunk);
           
           console.log(AmountLeftToInsert)
-
+          console.log(Number(context.number_of_customers))
 
           if (!isNaN(AmountLeftToInsert)) {
             const percentage = Math.min(
               Math.round(((insert_value - AmountLeftToInsert) / insert_value) * 100),
               100
             );
+
 
             
             context.progressValue = percentage;

@@ -94,7 +94,7 @@ main {
             }
           }
 
-          .company_info {
+          .data_management {
             padding: 20px 15px;
             padding-top: 0px;
             gap: 30px;
@@ -168,8 +168,40 @@ main {
               width:100px;
             }
           }
+
+          .data_structure{
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            gap: 8px;
+
+            .options {
+              display:flex;
+              gap: 10px;
+
+              button {
+               
+                color: #dcedfd;
+                border: none;
+                border-radius: 5px; 
+              }
+
+              .add{
+                background-color: #007af9;
+                padding: 10px 20px;
+              }
+
+              .drop{
+                background-color: red;
+                padding: 10px 30px;
+              }
+
+              }
+            }
+          }
         }
       }
     }
   }
-}
+

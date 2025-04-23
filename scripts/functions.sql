@@ -22,7 +22,7 @@ CREATE OR REPLACE FUNCTION decrement_invoice_count(cust_id integer)
     BEGIN
       UPDATE customers
       SET invoice_count = invoice_count - 1
-      WHERE id = ${cust_id}
+      WHERE id = cust_id;
     END;
     $$ 
 
@@ -107,16 +107,25 @@ CREATE OR REPLACE FUNCTION clearInvoices()
     ALTER TABLE invoice_details ADD CONSTRAINT invoice_details_invoice_id_fkey FOREIGN KEY (invoice_id) REFERENCES invoices(id);
     ALTER TABLE customers DROP COLUMN invoice_count;
     ALTER TABLE customers ADD COLUMN invoice_count INTEGER DEFAULT 0;
+    
     END;
     $$ LANGUAGE plpgsql;
 
 
-
-    RETURNS INTEGER AS $$
-    DECLARE
-    total_count INTEGER;
+CREATE OR REPLACE FUNCTION clearCustomers()
+    RETURNS VOID AS $$
     BEGIN
-    SELECT COUNT(*) INTO total_count FROM customers;
-    RETURN total_count;
+    -- Temporarily drop foreign key constraint
+    ALTER TABLE invoices DROP CONSTRAINT IF EXISTS invoices_customer_id_fkey;
+    
+    -- Call the function to clear invoices
+    PERFORM clearInvoices();
+	Truncate table customers  RESTART IDENTITY;
+    -- Re-add foreign key constraint
+    ALTER TABLE invoices
+    ADD CONSTRAINT invoices_customer_id_fkey
+    FOREIGN KEY (customer_id)
+    REFERENCES customers(id);
+
     END;
     $$ LANGUAGE plpgsql;

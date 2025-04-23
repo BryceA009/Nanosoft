@@ -1,13 +1,9 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="author" content="Bryce Allies" />
-    <meta
-      name="description"
-      content="This page contains the Taco shop contact details"
-    />
-    <title>Tutorial Page</title>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tutorial page</title>
     <link rel="icon" href="favicon.ico" type="image/x-icon" />
     <link rel="stylesheet" href="./css/style.css" type="text/css" />
     <link rel="stylesheet" href="./css/maintenance.css" type="text/css" />
@@ -18,11 +14,9 @@
       referrerpolicy="no-referrer"
     />
     <script defer src="js/alpine.min.js"></script>
-    
     <script src="js/htmx.min.js"></script>
-  </head>
-
-  <body>
+</head>
+<body>
     <div hx-trigger="load" hx-get="../components/side_nav.html"></div>
 
     <main>
@@ -48,7 +42,7 @@
 
         <article id="header">
           <div class="left_side_header">
-            <p>Maintenance</p>
+            <p>Database</p>
           </div>
           <div class="right_side_header">
             
@@ -62,7 +56,7 @@
                 <p>Insert dummy data</p>
               </div>
 
-                <div class="data_management">
+                <div class="company_info">
 
                   <div class="input">
                     <p>No. of customers</p>
@@ -86,18 +80,6 @@
                    <progress :value="progressValue" max="100"></progress>
                 </div>
 
-                <div class="data_structure">
-
-                    <p>Database </p>
-                    <div class="options">
-                        <button class = "add" type="button" @click = "addCustomers()"> Restore</button>
-                        <button class = "drop" type="button" @click = "addCustomers()"> Drop</button>
-                    </div>
-
-
-                  
-                </div>
-
 
             </div>
           </div>
@@ -109,6 +91,7 @@
     </main>
     <script src="./components/progress_bar.js"></script>
     <script src="./js/maintenance.js"></script>
-    <script src="./js/side_bar.js"></script>
-  </body>
+    <script src="./js/side_bar.js"></script> 
+
+</body>
 </html>

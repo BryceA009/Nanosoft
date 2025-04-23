@@ -48,12 +48,9 @@ CREATE TABLE IF NOT EXISTS settings(
     email text,
     address text,
     phone text
-)
+);
 
 CREATE TABLE IF NOT EXISTS status(
     id SERIAL PRIMARY KEY,
     name text   
-)
-
-
-
+);

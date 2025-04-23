@@ -143,6 +143,7 @@ const getInvoice = async (req, res, next) => {
 
 const addInvoice = async (req, res) => {
   let invoiceTotal = 0;
+  const client = await pool.connect();
   const {
     invoice_date,
     customer_id,
@@ -155,15 +156,18 @@ const addInvoice = async (req, res) => {
     tax_rate,
   } = req.body;
 
-  const customer_response = await pool.query(
-    `SELECT first_name,last_name FROM customers where id = ${customer_id}`
-  );
-
-  let cust_first_name = customer_response.rows[0]["first_name"]
-  let cust_last_name = customer_response.rows[0]["last_name"]
-
   try {
-    const result = await pool.query(
+    await client.query('BEGIN');
+
+    const customer_response = await client.query(
+      `SELECT first_name,last_name FROM customers where id = ${customer_id}`
+    );
+  
+    let cust_first_name = customer_response.rows[0]["first_name"]
+    let cust_last_name = customer_response.rows[0]["last_name"]
+
+
+    const result = await client.query(
       `INSERT INTO invoices (invoice_date, customer_id, due_date, invoice_note, status_id, currency_id, discount_rate, tax_rate, first_name, last_name) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9,$10) RETURNING *`,
       [
         invoice_date,
@@ -181,7 +185,7 @@ const addInvoice = async (req, res) => {
 
     const newInvoiceId = result.rows[0].id;
     invoice_lines.forEach(async (line) => {
-      await pool.query(
+    await client.query(
         "INSERT INTO invoice_details (description, qty, price, invoice_id) VALUES ($1, $2, $3, $4) RETURNING *",
         [line.description, line.qty, line.price, newInvoiceId]
       );
@@ -191,49 +195,79 @@ const addInvoice = async (req, res) => {
       invoiceTotal += total - discount + tax;
     });
 
-    await pool.query(
+    await client.query(
       `UPDATE customers
       SET invoice_count = invoice_count + 1
       WHERE id = ${customer_id}`
     );
 
     let invoiceID = result.rows.map((row) => row.id);
-    await pool.query(
+    await client.query(
       `UPDATE invoices
       SET invoice_total = ${invoiceTotal}
       WHERE id = ${invoiceID[0]}`
     );
-
+    await client.query('COMMIT');
     res.status(201).json(result.rows[0]); // Return the newly created invoice
-  } catch (err) {
+  } 
+  
+  catch (err) {
+    await client.query('ROLLBACK');
     console.error("Error inserting invoice:", err);
     res.status(500).json({ error: "Internal server error" });
   }
+
+  finally {
+    client.release();
+  }
+
+
 };
 
 const clearInvoices = async (req, res) => {
+  const client = await pool.connect();
   try {
-      await pool.query(`select clearInvoices()`)
+      await client.query("BEGIN")
+      await client.query(`select clearInvoices()`)
+      await client.query("COMMIT")
       res.json("Invoices database cleared");
-  } catch (err) {
+  } 
+  
+  catch (err) {
+    await client.query('ROLLBACK');
     console.error("Error deleting invoices:", err);
     res.status(500).json({ error: "Internal server error" });
+  }
+
+  finally {
+    client.release();
   }
 };
 
 const deleteInvoice = async (req, res) => {
+  const client = await pool.connect();
   try {
+    await client.query("BEGIN")
     const id = parseInt(req.params.id);
-    await pool.query(`select deleteInvoice(${id})`)
+    await client.query(`select deleteInvoice(${id})`)
+    await client.query("COMMIT")
     res.json(); 
 
-  } catch (err) {
+  } 
+  
+  catch (err) {
+    await client.query('ROLLBACK');
     console.error("Error deleting invoice:", err);
     res.status(500).json({ error: "Internal server error" });
+  }
+
+  finally {
+    client.release();
   }
 };
 
 const updateInvoice = async (req, res) => {
+  const client = await pool.connect();
   const {
     invoice_date,
     customer_id,
@@ -247,8 +281,8 @@ const updateInvoice = async (req, res) => {
   const id = parseInt(req.params.id); // Extract ID from request params
 
   try {
-
-    await pool.query(
+    await client.query("BEGIN")
+    await client.query(
       `SELECT updateInvoice($1, $2, $3, $4, $5, $6, $7, $8, $9)`,
       [
         id,
@@ -262,13 +296,18 @@ const updateInvoice = async (req, res) => {
         tax_rate
       ]
     );
-
+    await client.query("COMMIT")
     res.status(200).json(); 
   } 
   
   catch (err) {
+    await client.query("ROLLBACK")
     console.error("Error updating invoice:", err);
     res.status(500).json({ error: "Internal server error" });
+  }
+
+  finally {
+    client.release();
   }
 };
 
@@ -276,18 +315,23 @@ const addTestInvoices = async (req, res) => {
   const statusIds = await getStatusIds();
   const currencyIds = await getCurrencyIds();
   const customerIds = await getCustomerIds();
-  let insertedInvoiceIDs = [];
-  let insertedCustomerIds = [];
-  let updateData = [];
-
   const { number_of_invoices = 10 } = req.query;
-  res.setHeader("Content-Type", "text/html");
-  res.setHeader("Transfer-Encoding", "chunked");
+  const client = await pool.connect();
 
   const BATCH_SIZE = 5000;
   var total_invoices = Number(number_of_invoices);
   var num_batches = Math.ceil(total_invoices / BATCH_SIZE);
   let all_invoices = 0;
+
+  res.setHeader("Content-Type", "text/html");
+  res.setHeader("Transfer-Encoding", "chunked");
+
+  let insertedInvoiceIDs = [];
+  let insertedCustomerIds = [];
+  let updateData = [];
+
+  try{
+    await client.query("BEGIN")
 
   while (num_batches > 0) {
     let invoice_batch =
@@ -303,8 +347,7 @@ const addTestInvoices = async (req, res) => {
         customer_id: customerIds[randomCustomer].id,
         invoice_note: faker.word.words(5),
         status_id: statusIds[Math.floor(Math.random() * statusIds.length)].id,
-        currency_id:
-          currencyIds[Math.floor(Math.random() * currencyIds.length)].id,
+        currency_id: currencyIds[Math.floor(Math.random() * currencyIds.length)].id,
         first_name: customerIds[randomCustomer].first_name,
         last_name: customerIds[randomCustomer].last_name,
       });
@@ -340,7 +383,7 @@ const addTestInvoices = async (req, res) => {
 
     // Execute query
     try {
-      const result = await pool.query(invoice_query, values);
+      const result = await client.query(invoice_query, values);
       insertedInvoiceIDs = result.rows.map((row) => row.id);
       insertedCustomerIds = result.rows.map((row) => row.customer_id);
       const customerCountMap = {};
@@ -352,14 +395,17 @@ const addTestInvoices = async (req, res) => {
       updateData = Object.entries(customerCountMap);
 
       all_invoices += invoice_batch;
-    } catch (err) {
+    } 
+    
+    catch (err) {
+      await client.query("ROLLBACK")
       console.error("Error inserting test invoices:", err);
       return res.status(500).json({ error: "Internal server error" });
     }
 
     //Updating customers
 
-    await pool.query(
+    await client.query(
       `
         UPDATE customers AS c
         SET invoice_count = c.invoice_count + v.count
@@ -408,9 +454,9 @@ const addTestInvoices = async (req, res) => {
       VALUES ${details_placeholders};
       `;
 
-    await pool.query(invoice_details_query, details_values);
+    await client.query(invoice_details_query, details_values);
 
-    await pool.query(
+    await client.query(
       `
         UPDATE invoices AS i
         SET invoice_total = ROUND(
@@ -433,8 +479,25 @@ const addTestInvoices = async (req, res) => {
     res.write(`${total_invoices} left to send`);
   }
 
+  await client.query("COMMIT")
   res.write("Task complete.\n");
   res.status(201).end();
+
+  }
+
+  catch (err) {
+    await client.query('ROLLBACK');
+    console.error("Error adding invoice:", err);
+    res.status(500).json({ error: "Internal server error" });
+  }
+
+  finally{
+    client.release();
+  }
+
+
+
+ 
 };
 
 const totalInvoices = async (req, res) => {
