@@ -1,7 +1,10 @@
-How to Run
+How to setup database tables
 
-type chmod +x run.sh
+Navigate to scripts
 type sh master.sh
+
+How to run application
 node server.js
 npm i express
+
 http://localhost:5000/invoice_list.html
