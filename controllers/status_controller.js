@@ -1,12 +1,13 @@
 const { Pool } = require('pg');
+const config = require('../config.js');
 
 // PostgreSQL connection configuration
 const pool = new Pool({
-    user: 'postgres', // Replace with your PostgreSQL username
-    host: 'localhost',
-    database: 'postgres', // Replace with your database name
-    password: 'BryceA09', // Replace with your PostgreSQL password
-    port: 5432, // Default PostgreSQL port
+    user: config.user, // Replace with your PostgreSQL username
+    host: config.host,
+    database: config.database, // Replace with your database name
+    password: config.password, // Replace with your PostgreSQL password
+    port: config.port, // Default PostgreSQL port
 });
 
 
@@ -18,7 +19,7 @@ const getStatuses = async (req, res, next) => {
         console.error('Error fetching statuses:', err);
         res.status(500).json({ error: 'Internal server error' });
     }
-  };
+};
 
 const getStatus = async (req, res, next) => {
     try {
@@ -29,10 +30,10 @@ const getStatus = async (req, res, next) => {
         console.error('Error fetching status:', err);
         res.status(500).json({ error: 'Internal server error' });
     }
-  };
+};
 
 const addStatus = async (req, res) => {
-    const {name} = req.body;
+    const { name } = req.body;
     try {
         const result = await pool.query(
             'INSERT INTO status (name) VALUES ($1) RETURNING *',
@@ -43,7 +44,7 @@ const addStatus = async (req, res) => {
         console.error('Error inserting status:', err);
         res.status(500).json({ error: 'Internal server error' });
     }
-   };
+};
 
 const deleteStatus = async (req, res) => {
     try {
@@ -58,7 +59,7 @@ const deleteStatus = async (req, res) => {
 }
 
 const updateStatus = async (req, res) => {
-    const {name} = req.body;
+    const { name } = req.body;
     const id = parseInt(req.params.id); // Extract ID from request params
 
     try {

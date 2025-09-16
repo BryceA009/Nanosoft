@@ -1,12 +1,13 @@
 const { Pool } = require('pg');
+const config = require('../config.js');
 
 // PostgreSQL connection configuration
 const pool = new Pool({
-    user: 'postgres', // Replace with your PostgreSQL username
-    host: 'localhost',
-    database: 'postgres', // Replace with your database name
-    password: 'BryceA09', // Replace with your PostgreSQL password
-    port: 5432, // Default PostgreSQL port
+    user: config.user, // Replace with your PostgreSQL username
+    host: config.host,
+    database: config.database, // Replace with your database name
+    password: config.password, // Replace with your PostgreSQL password
+    port: config.port, // Default PostgreSQL port
 });
 
 
@@ -20,15 +21,15 @@ const getSettings = async (req, res, next) => {
         console.error('Error fetching settings:', err);
         res.status(500).json({ error: 'Internal server error' });
     }
-  };
+};
 
 
 const updateSettings = async (req, res) => {
-    const {company_name, registration_no, vat_no, email,address, phone} = req.body;
+    const { company_name, registration_no, vat_no, email, address, phone } = req.body;
 
     const result = await pool.query('SELECT * FROM settings');
 
-    const id  = result.rows[0].id
+    const id = result.rows[0].id
 
     try {
         const result = await pool.query(
@@ -44,7 +45,7 @@ const updateSettings = async (req, res) => {
                 
              WHERE id = $7
              RETURNING *`,
-            [company_name || null, registration_no || null, vat_no || null, email || null, address  || null, phone || null, id]
+            [company_name || null, registration_no || null, vat_no || null, email || null, address || null, phone || null, id]
         );
 
         if (result.rows.length === 0) {

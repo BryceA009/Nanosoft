@@ -1,12 +1,13 @@
 const { Pool } = require('pg');
+const config = require('../config.js');
 
 // PostgreSQL connection configuration
 const pool = new Pool({
-    user: 'postgres', // Replace with your PostgreSQL username
-    host: 'localhost',
-    database: 'postgres', // Replace with your database name
-    password: 'BryceA09', // Replace with your PostgreSQL password
-    port: 5432, // Default PostgreSQL port
+    user: config.user, // Replace with your PostgreSQL username
+    host: config.host,
+    database: config.database, // Replace with your database name
+    password: config.password, // Replace with your PostgreSQL password
+    port: config.port, // Default PostgreSQL port
 });
 
 
@@ -41,10 +42,10 @@ const getInvoiceDetail = async (req, res, next) => {
         console.error('Error fetching invoice detail:', err);
         res.status(500).json({ error: 'Internal server error' });
     }
-  };
+};
 
 const addInvoiceDetail = async (req, res) => {
-    const {description, qty, price, invoice_id} = req.body;
+    const { description, qty, price, invoice_id } = req.body;
     try {
         const result = await pool.query(
             'INSERT INTO invoice_details (description, qty, price, invoice_id) VALUES ($1, $2, $3, $4) RETURNING *',
@@ -55,7 +56,7 @@ const addInvoiceDetail = async (req, res) => {
         console.error('Error inserting invoice details:', err);
         res.status(500).json({ error: 'Internal server error' });
     }
-   };
+};
 
 const deleteInvoiceDetail = async (req, res) => {
     try {
@@ -70,7 +71,7 @@ const deleteInvoiceDetail = async (req, res) => {
 }
 
 const updateInvoiceDetail = async (req, res) => {
-    const {description, qty, price, invoice_id} = req.body;
+    const { description, qty, price, invoice_id } = req.body;
     const id = parseInt(req.params.id); // Extract ID from request params
 
     try {
@@ -100,4 +101,4 @@ const updateInvoiceDetail = async (req, res) => {
 
 
 
-module.exports = {getInvoiceDetails, getInvoiceDetail, addInvoiceDetail, deleteInvoiceDetail, updateInvoiceDetail};
+module.exports = { getInvoiceDetails, getInvoiceDetail, addInvoiceDetail, deleteInvoiceDetail, updateInvoiceDetail };

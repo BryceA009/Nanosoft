@@ -1,47 +1,38 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="author" content="Bryce Allies" />
-    <meta
-      name="description"
-      content="This page contains the Taco shop contact details"
-    />
-    <title>Tutorial Page</title>
-    <link rel="icon" href="favicon.ico" type="image/x-icon" />
-    <link rel="stylesheet" href="./css/style.css" type="text/css" />
-    <link rel="stylesheet" href="./css/maintenance.css" type="text/css" />
-    <link
-      rel="stylesheet"
-      href="css/icons.min.css"
-      crossorigin="anonymous"
-      referrerpolicy="no-referrer"
-    />
-    <script defer src="js/alpine.min.js"></script>
-    
-    <script src="js/htmx.min.js"></script>
-  </head>
 
-  <body>
-    <div hx-trigger="load" hx-get="../components/side_nav.html"></div>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="author" content="Bryce Allies" />
+  <meta name="description" content="This page contains the Taco shop contact details" />
+  <title>Tutorial Page</title>
+  <link rel="icon" href="favicon.ico" type="image/x-icon" />
+  <link rel="stylesheet" href="./css/style.css" type="text/css" />
+  <link rel="stylesheet" href="./css/maintenance.css" type="text/css" />
+  <link rel="stylesheet" href="css/icons.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
+  <script defer src="js/alpine.min.js"></script>
 
-    <main>
-      <header>
-        <div class="left_side_header">
-        </div>
-        <div class="right_side_header">
-        </div>
-      </header>
-    
-      <form action="https://eu.httpbin.org/post" x-data = "MaintenanceForm" method = "POST">
+  <script src="js/htmx.min.js"></script>
+</head>
+
+<body>
+  <div hx-trigger="load" hx-get="./components/side_nav.html"></div>
+
+  <main>
+    <header>
+      <div class="left_side_header">
+      </div>
+      <div class="right_side_header">
+      </div>
+    </header>
+
+    <form action="https://eu.httpbin.org/post" x-data="MaintenanceForm" method="POST">
 
       <section>
 
-        <div class = "overlay" x-show="show">
-          <div 
-              x-transition
-              class="update_notification">
-              Updated
+        <div class="overlay" x-show="show">
+          <div x-transition class="update_notification">
+            Updated
 
           </div>
         </div>
@@ -51,7 +42,7 @@
             <p>Maintenance</p>
           </div>
           <div class="right_side_header">
-            
+
           </div>
         </article>
 
@@ -62,41 +53,41 @@
                 <p>Insert dummy data</p>
               </div>
 
-                <div class="data_management">
+              <div class="data_management">
 
-                  <div class="input">
-                    <p>No. of customers</p>
-                    <div class="insert">
-                        <input type="number" max = "1000000" x-model = "number_of_customers">
-                        <button type="button" @click = "addCustomers()"> Insert</button>
-                        <button type="button" class = "delete" @click = "clearCustomers()"> Clear</button>
-                    </div>
-                   </div>
-
-
-                   <div class="input">
-                    <p>No. of invoices </p>
-                    <div class="insert">
-                        <input type="number" max = "1000000" x-model = "number_of_invoices">
-                        <button type="button" @click = "addInvoices()"> Insert</button>
-                        <button type="button" class = "delete" @click = "clearInvoices()"> Clear</button>
-                        
-                    </div>
-                   </div>
-                   <progress :value="progressValue" max="100"></progress>
+                <div class="input">
+                  <p>No. of customers</p>
+                  <div class="insert">
+                    <input type="number" max="1000000" x-model="number_of_customers">
+                    <button type="button" @click="addCustomers()"> Insert</button>
+                    <button type="button" class="delete" @click="clearCustomers()"> Clear</button>
+                  </div>
                 </div>
 
-                <div class="data_structure">
 
-                    <p>Database </p>
-                    <div class="options">
-                        <button class = "add" type="button" @click = "addCustomers()"> Restore</button>
-                        <button class = "drop" type="button" @click = "addCustomers()"> Drop</button>
-                    </div>
+                <div class="input">
+                  <p>No. of invoices </p>
+                  <div class="insert">
+                    <input type="number" max="1000000" x-model="number_of_invoices">
+                    <button type="button" @click="addInvoices()"> Insert</button>
+                    <button type="button" class="delete" @click="clearInvoices()"> Clear</button>
 
-
-                  
+                  </div>
                 </div>
+                <progress :value="progressValue" max="100"></progress>
+              </div>
+
+              <div class="data_structure">
+
+                <p>Database </p>
+                <div class="options">
+                  <button class="add" type="button" @click="addCustomers()"> Restore</button>
+                  <button class="drop" type="button" @click="addCustomers()"> Drop</button>
+                </div>
+
+
+
+              </div>
 
 
             </div>
@@ -105,10 +96,12 @@
       </section>
 
 
-      </form>
-    </main>
-    <script src="./components/progress_bar.js"></script>
-    <script src="./js/maintenance.js"></script>
-    <script src="./js/side_bar.js"></script>
-  </body>
+    </form>
+  </main>
+
+  <script src="./components/progress_bar.js"></script>
+  <script src="./js/maintenance.js"></script>
+  <script src="./js/side_bar.js"></script>
+</body>
+
 </html>

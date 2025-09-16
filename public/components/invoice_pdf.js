@@ -88,103 +88,103 @@ var dd = {
 
     // Group 2: Address Details (From & To Section)
     {
-        table: {
-            widths: ['*', 20, '*'], // Equal width for the two columns, and a small width for the spacer
-            body: [
-              [
-                {
-                  border: [true, true, true, true], // Border on all sides
-                  stack: [
-                    { text: "From:", bold: true, marginBottom: 10 },
-                    { text: "Bruce", style: "details", marginBottom: 3 },
-                    { text: "123 Pluto Road Plumstead", style: "details", marginBottom: 3 },
-                    { text: "0685889960", style: "details", marginBottom: 3 },
-                    { text: "Fuga Incididunt qui", style: "details" },
-                  ],
-                },
-                {
-                  border: [false, false, false, false], // No border for the spacer
-                  text: '', // Empty text for the spacer
-                },
-                {
-                  border: [true, true, true, true], // Border on all sides
-                  stack: [
-                    { text: "To:", bold: true, marginBottom: 10 },
-                    { text: "Bryce Allies", style: "details" , marginBottom: 3 },
-                    { text: "123 Pluto Road Plumstead", style: "details", marginBottom: 3 },
-                    { text: "0685889960", style: "details", marginBottom: 3 },
-                    { text: "bryce.allies@outlook.com", style: "details" },
-                  ],
-                },
+      table: {
+        widths: ['*', 20, '*'], // Equal width for the two columns, and a small width for the spacer
+        body: [
+          [
+            {
+              border: [true, true, true, true], // Border on all sides
+              stack: [
+                { text: "From:", bold: true, marginBottom: 10 },
+                { text: "Bruce", style: "details", marginBottom: 3 },
+                { text: "123 Simon Street Newlands", style: "details", marginBottom: 3 },
+                { text: "06853421230", style: "details", marginBottom: 3 },
+                { text: "Fuga Incididunt qui", style: "details" },
               ],
-            ],
-          },
-          layout: {
-            hLineWidth: function (i, node) {
-              return 1; // Horizontal line width
             },
-            vLineWidth: function (i, node) {
-              return 1; // Vertical line width
+            {
+              border: [false, false, false, false], // No border for the spacer
+              text: '', // Empty text for the spacer
             },
-            hLineColor: function (i, node) {
-              return '#f2f5f8'; // Horizontal line color
+            {
+              border: [true, true, true, true], // Border on all sides
+              stack: [
+                { text: "To:", bold: true, marginBottom: 10 },
+                { text: "Paul James", style: "details", marginBottom: 3 },
+                { text: "Sunny Side Road", style: "details", marginBottom: 3 },
+                { text: "0245632341", style: "details", marginBottom: 3 },
+                { text: "bryce.allies@outlook.com", style: "details" },
+              ],
             },
-            vLineColor: function (i, node) {
-              return '#f2f5f8'; // Vertical line color
-            },
-            
-            paddingLeft: function (i, node) { return 10; },  // Left padding
-            paddingRight: function (i, node) { return 10; }, // Right padding
-            paddingTop: function (i, node) { return 10; },  // Left padding
-            paddingBottom: function (i, node) { return 10; }, // Right padding
+          ],
+        ],
+      },
+      layout: {
+        hLineWidth: function (i, node) {
+          return 1; // Horizontal line width
+        },
+        vLineWidth: function (i, node) {
+          return 1; // Vertical line width
+        },
+        hLineColor: function (i, node) {
+          return '#f2f5f8'; // Horizontal line color
+        },
+        vLineColor: function (i, node) {
+          return '#f2f5f8'; // Vertical line color
+        },
 
-            
-          },
+        paddingLeft: function (i, node) { return 10; },  // Left padding
+        paddingRight: function (i, node) { return 10; }, // Right padding
+        paddingTop: function (i, node) { return 10; },  // Left padding
+        paddingBottom: function (i, node) { return 10; }, // Right padding
+
+
+      },
     },
 
     // Group 3: Table
     {
-        table: {
-            headerRows: 1,
-            widths: ["10%", "40%", "15%", "15%", "20%"],
-            body: [
-              // Table Headers
-              [
-                { text: "#", bold: true, style: "table_header" },
-                { text: "Description", bold: true, style: "table_header" },
-                { text: "QTY", bold: true, alignment: "right", style: "table_header" },
-                { text: "Price", bold: true, alignment: "right", style: "table_header" },
-                { text: "Amount", bold: true, alignment: "right", style: "table_header" },
-              ],
-              // Static Rows
-              [
-                { text: "1", style: "table_row" },
-                { text: "Soluta nulla incidid" , style: "table_row" },
-                { text: "6", alignment: "right" , style: "table_row" },
-                { text: "89", alignment: "right" , style: "table_row" },
-                { text: "5340.00", alignment: "right" , style: "table_row" },
-              ],
-              [
-                { text: "2" , style: "table_row" },
-                { text: "Don" , style: "table_row" },
-                { text: "50", alignment: "right" , style: "table_row" },
-                { text: "2", alignment: "right" , style: "table_row" },
-                { text: "100.00", alignment: "right" , style: "table_row" },
-              ],
-            ],
-          },
-          layout: {
-            fillColor: function (rowIndex) {
-              return rowIndex === 0 ? "#fafafb" : null; // Light gray background for headers
-            },
-            paddingLeft: function (i, node) { return 10; },  // Left padding
-            paddingRight: function (i, node) { return 8; }, // Right padding
-            paddingTop: function (i, node) { return i === 0 ? 8 : 13; },  // Less padding on header row
-            paddingBottom: function (i, node) { return i === 0 ? 8 : 13; }, // Less padding on header row
-            vLineWidth: function (i, node) { return 0; },  // Removes vertical lines
-            hLineColor: function (i, node) { return "#f2f5f8"; },
-          },
-          margin: [0, 20, 0, 20], // Adds space above the table
+      table: {
+        headerRows: 1,
+        widths: ["10%", "40%", "15%", "15%", "20%"],
+        body: [
+          // Table Headers
+          [
+            { text: "#", bold: true, style: "table_header" },
+            { text: "Description", bold: true, style: "table_header" },
+            { text: "QTY", bold: true, alignment: "right", style: "table_header" },
+            { text: "Price", bold: true, alignment: "right", style: "table_header" },
+            { text: "Amount", bold: true, alignment: "right", style: "table_header" },
+          ],
+          // Static Rows
+          [
+            { text: "1", style: "table_row" },
+            { text: "Soluta nulla incidid", style: "table_row" },
+            { text: "6", alignment: "right", style: "table_row" },
+            { text: "89", alignment: "right", style: "table_row" },
+            { text: "5340.00", alignment: "right", style: "table_row" },
+          ],
+          [
+            { text: "2", style: "table_row" },
+            { text: "Don", style: "table_row" },
+            { text: "50", alignment: "right", style: "table_row" },
+            { text: "2", alignment: "right", style: "table_row" },
+            { text: "100.00", alignment: "right", style: "table_row" },
+          ],
+        ],
+      },
+      layout: {
+        fillColor: function (rowIndex) {
+          return rowIndex === 0 ? "#fafafb" : null; // Light gray background for headers
+        },
+        paddingLeft: function (i, node) { return 10; },  // Left padding
+        paddingRight: function (i, node) { return 8; }, // Right padding
+        paddingTop: function (i, node) { return i === 0 ? 8 : 13; },  // Less padding on header row
+        paddingBottom: function (i, node) { return i === 0 ? 8 : 13; }, // Less padding on header row
+        vLineWidth: function (i, node) { return 0; },  // Removes vertical lines
+        hLineColor: function (i, node) { return "#f2f5f8"; },
+      },
+      margin: [0, 20, 0, 20], // Adds space above the table
     },
 
     // Group 4: Calculated

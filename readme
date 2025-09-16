@@ -1,0 +1,7 @@
+How to Run
+
+type chmod +x run.sh
+type sh master.sh
+node server.js
+npm i express
+http://localhost:5000/invoice_list.html

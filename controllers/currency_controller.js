@@ -1,12 +1,13 @@
 const { Pool } = require('pg');
+const config = require('../config.js');
 
 // PostgreSQL connection configuration
 const pool = new Pool({
-    user: 'postgres', // Replace with your PostgreSQL username
-    host: 'localhost',
-    database: 'postgres', // Replace with your database name
-    password: 'BryceA09', // Replace with your PostgreSQL password
-    port: 5432, // Default PostgreSQL port
+    user: config.user, // Replace with your PostgreSQL username
+    host: config.host,
+    database: config.database, // Replace with your database name
+    password: config.password, // Replace with your PostgreSQL password
+    port: config.port, // Default PostgreSQL port
 });
 
 
@@ -18,7 +19,7 @@ const getCurrencies = async (req, res, next) => {
         console.error('Error fetching currencies:', err);
         res.status(500).json({ error: 'Internal server error' });
     }
-  };
+};
 
 const getCurrency = async (req, res, next) => {
     try {
@@ -29,10 +30,10 @@ const getCurrency = async (req, res, next) => {
         console.error('Error fetching currency:', err);
         res.status(500).json({ error: 'Internal server error' });
     }
-  };
+};
 
 const addCurrency = async (req, res) => {
-    const {name, symbol} = req.body;
+    const { name, symbol } = req.body;
     try {
         const result = await pool.query(
             'INSERT INTO currency (name, symbol) VALUES ($1, $2) RETURNING *',
@@ -43,7 +44,7 @@ const addCurrency = async (req, res) => {
         console.error('Error inserting currency:', err);
         res.status(500).json({ error: 'Internal server error' });
     }
-   };
+};
 
 const deleteCurrency = async (req, res) => {
     try {
@@ -58,7 +59,7 @@ const deleteCurrency = async (req, res) => {
 }
 
 const updateCurrency = async (req, res) => {
-    const {name, symbol} = req.body;
+    const { name, symbol } = req.body;
     const id = parseInt(req.params.id); // Extract ID from request params
 
     try {

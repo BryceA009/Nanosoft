@@ -9,16 +9,18 @@ const invoice_detail = require('./routes/invoice_details');
 const express = require('express');
 const { Pool } = require('pg');
 const app = express();
-const port = 3000;
-
+const port = 5000;
+const config = require('./config.js');
+console.log(config.user); // should log your .env value
 app.use(express.static('public'))
+
 // PostgreSQL connection configuration
 const pool = new Pool({
-    user: 'postgres', // Replace with your PostgreSQL username
-    host: 'localhost',
-    database: 'postgres', // Replace with your database name
-    password: 'BryceA09', // Replace with your PostgreSQL password
-    port: 5432, // Default PostgreSQL port
+    user: config.user, // Replace with your PostgreSQL username
+    host: config.host,
+    database: config.database, // Replace with your database name
+    password: config.password, // Replace with your PostgreSQL password
+    port: config.port, // Default PostgreSQL port
 });
 
 // Test the database connection

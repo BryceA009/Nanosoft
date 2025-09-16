@@ -1,13 +1,14 @@
 const { Pool } = require("pg");
 const { faker } = require("@faker-js/faker");
+const config = require('../config.js');
 
 // PostgreSQL connection configuration
 const pool = new Pool({
-  user: "postgres", // Replace with your PostgreSQL username
-  host: "localhost",
-  database: "postgres", // Replace with your database name
-  password: "BryceA09", // Replace with your PostgreSQL password
-  port: 5432, // Default PostgreSQL port
+  user: config.user, // Replace with your PostgreSQL username
+  host: config.host,
+  database: config.database, // Replace with your database name
+  password: config.password, // Replace with your PostgreSQL password
+  port: config.port, // Default PostgreSQL port
 });
 
 const getInvoices = async (req, res, next) => {
@@ -115,7 +116,7 @@ const getInvoices = async (req, res, next) => {
     query += ` limit ${page_size}`;
     query_total += ` group by status_id`
 
-    
+
     // Execute query
 
     const result = await pool.query(query);
@@ -162,7 +163,7 @@ const addInvoice = async (req, res) => {
     const customer_response = await client.query(
       `SELECT first_name,last_name FROM customers where id = ${customer_id}`
     );
-  
+
     let cust_first_name = customer_response.rows[0]["first_name"]
     let cust_last_name = customer_response.rows[0]["last_name"]
 
@@ -185,7 +186,7 @@ const addInvoice = async (req, res) => {
 
     const newInvoiceId = result.rows[0].id;
     invoice_lines.forEach(async (line) => {
-    await client.query(
+      await client.query(
         "INSERT INTO invoice_details (description, qty, price, invoice_id) VALUES ($1, $2, $3, $4) RETURNING *",
         [line.description, line.qty, line.price, newInvoiceId]
       );
@@ -209,8 +210,8 @@ const addInvoice = async (req, res) => {
     );
     await client.query('COMMIT');
     res.status(201).json(result.rows[0]); // Return the newly created invoice
-  } 
-  
+  }
+
   catch (err) {
     await client.query('ROLLBACK');
     console.error("Error inserting invoice:", err);
@@ -227,12 +228,12 @@ const addInvoice = async (req, res) => {
 const clearInvoices = async (req, res) => {
   const client = await pool.connect();
   try {
-      await client.query("BEGIN")
-      await client.query(`select clearInvoices()`)
-      await client.query("COMMIT")
-      res.json("Invoices database cleared");
-  } 
-  
+    await client.query("BEGIN")
+    await client.query(`select clearInvoices()`)
+    await client.query("COMMIT")
+    res.json("Invoices database cleared");
+  }
+
   catch (err) {
     await client.query('ROLLBACK');
     console.error("Error deleting invoices:", err);
@@ -251,10 +252,10 @@ const deleteInvoice = async (req, res) => {
     const id = parseInt(req.params.id);
     await client.query(`select deleteInvoice(${id})`)
     await client.query("COMMIT")
-    res.json(); 
+    res.json();
 
-  } 
-  
+  }
+
   catch (err) {
     await client.query('ROLLBACK');
     console.error("Error deleting invoice:", err);
@@ -297,9 +298,9 @@ const updateInvoice = async (req, res) => {
       ]
     );
     await client.query("COMMIT")
-    res.status(200).json(); 
-  } 
-  
+    res.status(200).json();
+  }
+
   catch (err) {
     await client.query("ROLLBACK")
     console.error("Error updating invoice:", err);
@@ -330,134 +331,133 @@ const addTestInvoices = async (req, res) => {
   let insertedCustomerIds = [];
   let updateData = [];
 
-  try{
+  try {
     await client.query("BEGIN")
 
-  while (num_batches > 0) {
-    let invoice_batch =
-      total_invoices - BATCH_SIZE > 0 ? BATCH_SIZE : total_invoices;
-    let invoices = [];
-    for (let i = 0; i < invoice_batch; i++) {
-      let randomCustomer = Math.floor(Math.random() * customerIds.length);
-      invoices.push({
-        invoice_date: faker.date.anytime(),
-        due_date: faker.date.anytime(),
-        tax_rate: faker.number.float({ max: 100 }),
-        discount_rate: faker.number.float({ max: 100 }),
-        customer_id: customerIds[randomCustomer].id,
-        invoice_note: faker.word.words(5),
-        status_id: statusIds[Math.floor(Math.random() * statusIds.length)].id,
-        currency_id: currencyIds[Math.floor(Math.random() * currencyIds.length)].id,
-        first_name: customerIds[randomCustomer].first_name,
-        last_name: customerIds[randomCustomer].last_name,
-      });
-    }
+    while (num_batches > 0) {
+      let invoice_batch =
+        total_invoices - BATCH_SIZE > 0 ? BATCH_SIZE : total_invoices;
+      let invoices = [];
+      for (let i = 0; i < invoice_batch; i++) {
+        let randomCustomer = Math.floor(Math.random() * customerIds.length);
+        invoices.push({
+          invoice_date: faker.date.anytime(),
+          due_date: faker.date.anytime(),
+          tax_rate: faker.number.float({ max: 100 }),
+          discount_rate: faker.number.float({ max: 100 }),
+          customer_id: customerIds[randomCustomer].id,
+          invoice_note: faker.word.words(5),
+          status_id: statusIds[Math.floor(Math.random() * statusIds.length)].id,
+          currency_id: currencyIds[Math.floor(Math.random() * currencyIds.length)].id,
+          first_name: customerIds[randomCustomer].first_name,
+          last_name: customerIds[randomCustomer].last_name,
+        });
+      }
 
-    // Prepare SQL placeholders and values
-    let values = [];
-    let placeholders = invoices
-      .map((invo, index) => {
-        const i = index * 10;
-        values.push(
-          invo.invoice_date,
-          invo.due_date,
-          invo.invoice_note,
-          invo.tax_rate,
-          invo.discount_rate,
-          invo.customer_id,
-          invo.status_id,
-          invo.currency_id,
-          invo.first_name,
-          invo.last_name
-        );
-        return `($${i + 1}, $${i + 2}, $${i + 3}, $${i + 4}, $${i + 5}, $${
-          i + 6
-        }, $${i + 7}, $${i + 8}, $${i + 9}, $${i + 10})`;
-      })
-      .join(", ");
+      // Prepare SQL placeholders and values
+      let values = [];
+      let placeholders = invoices
+        .map((invo, index) => {
+          const i = index * 10;
+          values.push(
+            invo.invoice_date,
+            invo.due_date,
+            invo.invoice_note,
+            invo.tax_rate,
+            invo.discount_rate,
+            invo.customer_id,
+            invo.status_id,
+            invo.currency_id,
+            invo.first_name,
+            invo.last_name
+          );
+          return `($${i + 1}, $${i + 2}, $${i + 3}, $${i + 4}, $${i + 5}, $${i + 6
+            }, $${i + 7}, $${i + 8}, $${i + 9}, $${i + 10})`;
+        })
+        .join(", ");
 
-    let invoice_query = `INSERT INTO invoices 
+      let invoice_query = `INSERT INTO invoices 
       (invoice_date, due_date, invoice_note, tax_rate, discount_rate, customer_id, status_id, currency_id, first_name, last_name)
       VALUES ${placeholders}
       Returning id, customer_id;`;
 
-    // Execute query
-    try {
-      const result = await client.query(invoice_query, values);
-      insertedInvoiceIDs = result.rows.map((row) => row.id);
-      insertedCustomerIds = result.rows.map((row) => row.customer_id);
-      const customerCountMap = {};
+      // Execute query
+      try {
+        const result = await client.query(invoice_query, values);
+        insertedInvoiceIDs = result.rows.map((row) => row.id);
+        insertedCustomerIds = result.rows.map((row) => row.customer_id);
+        const customerCountMap = {};
 
-      await insertedCustomerIds.forEach((id) => {
-        customerCountMap[id] = (customerCountMap[id] || 0) + 1;
-      });
+        await insertedCustomerIds.forEach((id) => {
+          customerCountMap[id] = (customerCountMap[id] || 0) + 1;
+        });
 
-      updateData = Object.entries(customerCountMap);
+        updateData = Object.entries(customerCountMap);
 
-      all_invoices += invoice_batch;
-    } 
-    
-    catch (err) {
-      await client.query("ROLLBACK")
-      console.error("Error inserting test invoices:", err);
-      return res.status(500).json({ error: "Internal server error" });
-    }
+        all_invoices += invoice_batch;
+      }
 
-    //Updating customers
+      catch (err) {
+        await client.query("ROLLBACK")
+        console.error("Error inserting test invoices:", err);
+        return res.status(500).json({ error: "Internal server error" });
+      }
 
-    await client.query(
-      `
+      //Updating customers
+
+      await client.query(
+        `
         UPDATE customers AS c
         SET invoice_count = c.invoice_count + v.count
         FROM (
           VALUES ${updateData
-            .map((_, i) => `($${i * 2 + 1}::int, $${i * 2 + 2}::int)`)
-            .join(", ")}
+          .map((_, i) => `($${i * 2 + 1}::int, $${i * 2 + 2}::int)`)
+          .join(", ")}
         ) AS v(id, count)
         WHERE c.id = v.id;
         `,
-      updateData.flat()
-    );
+        updateData.flat()
+      );
 
-    //Inserting invoice details
-    let invoice_lines = [];
-    for (let i = 0; i < insertedInvoiceIDs.length; i++) {
-      const invoice_id = insertedInvoiceIDs[i];
-      const numLines = Math.floor(Math.random() * 4) + 1;
-      for (let j = 0; j < numLines; j++) {
-        invoice_lines.push({
-          description: faker.commerce.product(),
-          qty: faker.number.int({ min: 1, max: 20 }),
-          price: faker.number.float({ min: 10, max: 500, precision: 0.01 }),
-          invoice_id: invoice_id,
-        });
+      //Inserting invoice details
+      let invoice_lines = [];
+      for (let i = 0; i < insertedInvoiceIDs.length; i++) {
+        const invoice_id = insertedInvoiceIDs[i];
+        const numLines = Math.floor(Math.random() * 4) + 1;
+        for (let j = 0; j < numLines; j++) {
+          invoice_lines.push({
+            description: faker.commerce.product(),
+            qty: faker.number.int({ min: 1, max: 20 }),
+            price: faker.number.float({ min: 10, max: 500, precision: 0.01 }),
+            invoice_id: invoice_id,
+          });
+        }
       }
-    }
 
-    let details_values = [];
-    let details_placeholders = invoice_lines
-      .map((line, index) => {
-        const i = index * 4;
-        details_values.push(
-          line.description,
-          line.qty,
-          line.price,
-          line.invoice_id
-        );
-        return `($${i + 1}, $${i + 2}, $${i + 3}, $${i + 4})`;
-      })
-      .join(", ");
+      let details_values = [];
+      let details_placeholders = invoice_lines
+        .map((line, index) => {
+          const i = index * 4;
+          details_values.push(
+            line.description,
+            line.qty,
+            line.price,
+            line.invoice_id
+          );
+          return `($${i + 1}, $${i + 2}, $${i + 3}, $${i + 4})`;
+        })
+        .join(", ");
 
-    let invoice_details_query = `
+      let invoice_details_query = `
       INSERT INTO invoice_details
       (description, qty, price, invoice_id)
       VALUES ${details_placeholders};
       `;
 
-    await client.query(invoice_details_query, details_values);
+      await client.query(invoice_details_query, details_values);
 
-    await client.query(
-      `
+      await client.query(
+        `
         UPDATE invoices AS i
         SET invoice_total = ROUND(
           (d.subtotal - (d.subtotal * i.discount_rate / 100)) 
@@ -471,17 +471,17 @@ const addTestInvoices = async (req, res) => {
         ) AS d
         WHERE i.id = d.invoice_id;
         `,
-      [insertedInvoiceIDs]
-    );
+        [insertedInvoiceIDs]
+      );
 
-    num_batches -= 1;
-    total_invoices -= BATCH_SIZE;
-    res.write(`${total_invoices} left to send`);
-  }
+      num_batches -= 1;
+      total_invoices -= BATCH_SIZE;
+      res.write(`${total_invoices} left to send`);
+    }
 
-  await client.query("COMMIT")
-  res.write("Task complete.\n");
-  res.status(201).end();
+    await client.query("COMMIT")
+    res.write("Task complete.\n");
+    res.status(201).end();
 
   }
 
@@ -491,28 +491,28 @@ const addTestInvoices = async (req, res) => {
     res.status(500).json({ error: "Internal server error" });
   }
 
-  finally{
+  finally {
     client.release();
   }
 
 
 
- 
+
 };
 
 const totalInvoices = async (req, res) => {
   try {
     let query = `SELECT count(*) as total_invoices
-                    from invoices`;  
+                    from invoices`;
 
     // Execute query
     const result = await pool.query(query);
-    res.json(result.rows[0]);     
+    res.json(result.rows[0]);
 
-} catch (err) {
+  } catch (err) {
     console.error('Error fetching total:', err);
     res.status(500).json({ error: 'Internal server error' });
-}
+  }
 
 }
 

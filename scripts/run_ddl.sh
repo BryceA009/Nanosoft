@@ -1,27 +1,31 @@
 #!/bin/bash
 
-# Connection parameters
-DB_HOST="localhost"
-DB_PORT="5432"
-DB_NAME="postgres"
-DB_USER="postgres"
+# Load environment variables from .env
+export $(grep -v '^#' .env | xargs)
+
+
+# DB_HOST=Insert your host here
+# DB_PORT=Insert your port here
+# DB_NAME=Insert your name here
+# DB_USER=Insert your user here
+# DB_PASSWORD=insert your password here
 
 # Path to your DDL SQL file (passed as a parameter)
 DDL_FILE="$1"
 
-# Check if the DDL file parameter was provided
 if [ -z "$DDL_FILE" ]; then
   echo "Usage: $0 <path_to_ddl_file>" >&2
   exit 1
 fi
 
-# Check if the DDL file exists
 if [ ! -f "$DDL_FILE" ]; then
   echo "Error: DDL file '$DDL_FILE' not found." >&2
   exit 1
 fi
 
-export PGPASSWORD='BryceA09'
+# Pass password to psql via environment
+export PGPASSWORD="$DB_PASSWORD"
+
 psql \
   -h "$DB_HOST" \
   -p "$DB_PORT" \
@@ -30,7 +34,6 @@ psql \
   -f "$DDL_FILE" \
   --set ON_ERROR_STOP=1
 
-# Check for errors
 if [ $? -eq 0 ]; then
   echo "DDL executed successfully using file: $DDL_FILE"
 else

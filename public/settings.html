@@ -1,46 +1,37 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="author" content="Bryce Allies" />
-    <meta
-      name="description"
-      content="This page contains the Taco shop contact details"
-    />
-    <title>Tutorial Page</title>
-    <link rel="icon" href="favicon.ico" type="image/x-icon" />
-    <link rel="stylesheet" href="./css/style.css" type="text/css" />
-    <link rel="stylesheet" href="./css/settings.css" type="text/css" />
-    <link
-      rel="stylesheet"
-      href="css/icons.min.css"
-      crossorigin="anonymous"
-      referrerpolicy="no-referrer"
-    />
-    <script defer src="js/alpine.min.js"></script>
-    <script src="js/htmx.min.js"></script>
-  </head>
 
-  <body>
-    <div hx-trigger="load" hx-get="../components/side_nav.html"></div>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="author" content="Bryce Allies" />
+  <meta name="description" content="This page contains the Taco shop contact details" />
+  <title>Tutorial Page</title>
+  <link rel="icon" href="favicon.ico" type="image/x-icon" />
+  <link rel="stylesheet" href="./css/style.css" type="text/css" />
+  <link rel="stylesheet" href="./css/settings.css" type="text/css" />
+  <link rel="stylesheet" href="css/icons.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
+  <script defer src="js/alpine.min.js"></script>
+  <script src="js/htmx.min.js"></script>
+</head>
 
-    <main>
-      <header>
-        <div class="left_side_header">
-        </div>
-        <div class="right_side_header">
-        </div>
-      </header>
-    
-      <form action="https://eu.httpbin.org/post" x-data = "settingsForm" method = "POST">
+<body>
+  <div hx-trigger="load" hx-get="./components/side_nav.html"></div>
+
+  <main>
+    <header>
+      <div class="left_side_header">
+      </div>
+      <div class="right_side_header">
+      </div>
+    </header>
+
+    <form action="https://eu.httpbin.org/post" x-data="settingsForm" method="POST">
 
       <section>
 
-        <div class = "overlay" x-show="show">
-          <div 
-              x-transition
-              class="update_notification">
-              Updated
+        <div class="overlay" x-show="show">
+          <div x-transition class="update_notification">
+            Updated
 
           </div>
         </div>
@@ -50,7 +41,7 @@
             <p>Settings</p>
           </div>
           <div class="right_side_header">
-            
+
           </div>
         </article>
 
@@ -61,61 +52,60 @@
                 <p>Settings</p>
               </div>
 
-                <div class="company_info">
+              <div class="company_info">
 
-                  <div class="input">
-                    <p>Company Name</p>
-                    <input x-model = "company.company_name" type="text" placeholder="Enter Company Name">
-                    <template x-if="errors.includes('company_name')">
-                      <p class="error">Missing company name</p>
-                    </template>
-  
-                  </div>
-
-
-                  <div class="input">
-                    <p >Registration Number</p>
-                    <input x-model = "company.registration_no" type="number" placeholder="Enter Registration Number">
-                    <template x-if="errors.includes('registration_no')">
-                      <p class="error">Missing registration number</p>
-                    </template>
-                  </div>
-
-                  <div class="input">
-                    <p>VAT Number</p>
-                    <input x-model = "company.vat_no" type="number" placeholder="Enter VAT Number">
-                    <template x-if="errors.includes('vat_no')">
-                      <p class="error">Missing vat_number</p>
-                    </template>
-                  </div>
-
-                  <div class="input">
-                    <p >Email Address</p>
-                    <input x-model = "company.email" type="text" placeholder="Enter E-mail Address">
-                    <template x-if="errors.includes('email')">
-                      <p class="error">Missing company email</p>
-                    </template>
-                  </div>
-
-                  <div class="input">
-                    <p >Phone Number</p>
-                    <input x-model = "company.phone" type="tel" placeholder="Enter phone number">
-                    <template x-if="errors.includes('phone')">
-                      <p class="error">Missing company phone</p>
-                    </template>
-                  </div>
-
-                  <div class="input">
-                    <p>Address</p>
-                    <textarea x-model = "company.address" placeholder="Enter your Address"></textarea>
-                    <template x-if="errors.includes('address')">
-                      <p class="error">Missing company address</p>
-                    </template>
-                  </div>
-
-                  <button type="button" @click="save"> Update</button>
+                <div class="input">
+                  <p>Company Name</p>
+                  <input x-model="company.company_name" type="text" placeholder="Enter Company Name">
+                  <template x-if="errors.includes('company_name')">
+                    <p class="error">Missing company name</p>
+                  </template>
 
                 </div>
+
+                <div class="input">
+                  <p>Registration Number</p>
+                  <input x-model="company.registration_no" type="number" placeholder="Enter Registration Number">
+                  <template x-if="errors.includes('registration_no')">
+                    <p class="error">Missing registration number</p>
+                  </template>
+                </div>
+
+                <div class="input">
+                  <p>VAT Number</p>
+                  <input x-model="company.vat_no" type="number" placeholder="Enter VAT Number">
+                  <template x-if="errors.includes('vat_no')">
+                    <p class="error">Missing vat_number</p>
+                  </template>
+                </div>
+
+                <div class="input">
+                  <p>Email Address</p>
+                  <input x-model="company.email" type="text" placeholder="Enter E-mail Address">
+                  <template x-if="errors.includes('email')">
+                    <p class="error">Missing company email</p>
+                  </template>
+                </div>
+
+                <div class="input">
+                  <p>Phone Number</p>
+                  <input x-model="company.phone" type="tel" placeholder="Enter phone number">
+                  <template x-if="errors.includes('phone')">
+                    <p class="error">Missing company phone</p>
+                  </template>
+                </div>
+
+                <div class="input">
+                  <p>Address</p>
+                  <textarea x-model="company.address" placeholder="Enter your Address"></textarea>
+                  <template x-if="errors.includes('address')">
+                    <p class="error">Missing company address</p>
+                  </template>
+                </div>
+
+                <button type="button" @click="save"> Update</button>
+
+              </div>
 
 
             </div>
@@ -124,10 +114,11 @@
       </section>
 
 
-      </form>
-    </main>
+    </form>
+  </main>
 
-    <script src="./js/settings.js"></script>
-    <script src="./js/side_bar.js"></script>
-  </body>
+  <script src="./js/settings.js"></script>
+  <script src="./js/side_bar.js"></script>
+</body>
+
 </html>
